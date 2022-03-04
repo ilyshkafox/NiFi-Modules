@@ -1,0 +1,6 @@
+POST https://proverkacheka.com/api/v1/check/get
+Content-Type: application/x-www-form-urlencoded
+
+qr=1&qrraw=t%3D20210829T162200%26s%3D2663.58%26fn%3D9288000100178241%26i%3D112602%26fp%3D3418609577%26n%3D1&token=2199.V5pT65e0fFm1X9j76
+
+###

@@ -1,0 +1,3 @@
+ru.ilyshkafox.myreceipt.processors.MyReceiptModules.QrReceiptParse
+ru.ilyshkafox.myreceipt.processors.MyReceiptModules.ClearFlowFile
+ru.ilyshkafox.myreceipt.processors.MyReceiptModules.JoltTransformJSON_1_16_0

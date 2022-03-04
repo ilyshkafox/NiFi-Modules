@@ -1,0 +1,25 @@
+{
+  "type": "record",
+  "name": "RegisterManual",
+  "fields": [
+    {
+      "name": "uuid",
+      "type": "string"
+    },
+    {
+      "name": "data",
+      "type": "string"
+    },
+    {
+      "name": "sum",
+      "type": "int"
+    },
+    {
+      "name": "create_at",
+      "type": {
+        "type": "long",
+        "format": "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+      }
+    }
+  ]
+}

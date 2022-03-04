@@ -1,0 +1,208 @@
+{
+  "code": 3,
+  "user": "ООО \"СПАР МИДДЛ ВОЛГА\"",
+  "items": [{
+    "nds": 1,
+    "sum": 25947,
+    "name": "4005900147714 ШАМПУНЬ NIVEA СИЛА У",
+    "price": 25947,
+    "quantity": 1,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 1,
+    "sum": 35270,
+    "name": "82 ДОМАШНЯЯ КУХНЯ",
+    "price": 41988,
+    "quantity": 0.84,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 1,
+    "sum": 8188,
+    "name": "82 ДОМАШНЯЯ КУХНЯ",
+    "price": 41990,
+    "quantity": 0.195,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 1,
+    "sum": 2191,
+    "name": "2419751000005 СОУС ЧЕСНОЧНЫЙ 80г",
+    "price": 2191,
+    "quantity": 1,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 1,
+    "sum": 788,
+    "name": "1162 ПАКЕТ МАЙКА SCAN & G",
+    "price": 394,
+    "quantity": 2,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 2,
+    "sum": 10510,
+    "name": "2413935000003 СОЧЕНЬ С ТВОРОГОМ ПО",
+    "price": 10510,
+    "quantity": 1,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 2,
+    "sum": 3488,
+    "name": "1370 ПЛЮШКА МОСКОВСКАЯ ПО",
+    "price": 1744,
+    "quantity": 2,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 1,
+    "sum": 3235,
+    "name": "4607040744732 НАПИТОК СИЛЬНОГАЗИРО",
+    "price": 3235,
+    "quantity": 1,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 1,
+    "sum": 6127,
+    "name": "4607138220827 КВАС ДОМАШНИЙ SPAR N",
+    "price": 6127,
+    "quantity": 1,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 1,
+    "sum": 24192,
+    "name": "2411244000004 ПИЦЦА ЛЮБИТЕЛЬСКАЯ П",
+    "price": 6048,
+    "quantity": 4,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 1,
+    "sum": 6048,
+    "name": "1017 СУП ЛАПША С КУРИЦЕЙ",
+    "price": 6048,
+    "quantity": 1,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 1,
+    "sum": 12263,
+    "name": "4612757233172 ШОКОЛАД ALTIER МОЛОЧ",
+    "price": 12263,
+    "quantity": 1,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 2,
+    "sum": 2621,
+    "name": "1157 УКРОП СВЕЖИЙ 40г",
+    "price": 2621,
+    "quantity": 1,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 2,
+    "sum": 2589,
+    "name": "44 КАПУСТА БЕЛОКОЧАННАЯ",
+    "price": 3499,
+    "quantity": 0.74,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 2,
+    "sum": 15508,
+    "name": "113 КАПУСТА ЦВЕТНАЯ",
+    "price": 17523,
+    "quantity": 0.885,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 2,
+    "sum": 14245,
+    "name": "4607012351722 СЕМЕЧКИ ОТ МАРТИНА О",
+    "price": 14245,
+    "quantity": 1,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 2,
+    "sum": 8748,
+    "name": "1562 БАГЕТ С ВЕТЧИНОЙ И С",
+    "price": 4374,
+    "quantity": 2,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 2,
+    "sum": 17824,
+    "name": "2360130000003 КОЛБАСА ВАРЕНАЯ ДОКТ",
+    "price": 26289,
+    "quantity": 0.678,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 1,
+    "sum": 23580,
+    "name": "2413576000004 ПИРОЖНОЕ КОРЗИНОЧКА",
+    "price": 23580,
+    "quantity": 1,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 2,
+    "sum": 15384,
+    "name": "4602358003663 МОРОЖЕНОЕ ПЛОМБИР КО",
+    "price": 5128,
+    "quantity": 3,
+    "paymentType": 4,
+    "productType": 1
+  }, {
+    "nds": 2,
+    "sum": 27612,
+    "name": "119 КАРТОФЕЛЬ МЫТЫЙ БЕЛЫ",
+    "price": 4900,
+    "quantity": 5.635,
+    "paymentType": 4,
+    "productType": 1
+  }],
+  "nds10": 10774,
+  "nds18": 24638,
+  "fnsUrl": "www.nalog.ru",
+  "region": "52",
+  "userInn": "5258056945  ",
+  "dateTime": "2021-08-29T16:22:00",
+  "kktRegId": "0001144830058751    ",
+  "metadata": {
+    "id": 3862842534617009153,
+    "ofdId": "ofd9",
+    "address": "603065,Россия,Нижегородская область,,г Нижний Новгород г.п.,,,ул Дьяконова элем. улично-дорожн.сети,,д. д 4А,,,,",
+    "subtype": "receipt",
+    "receiveDate": "2021-08-29T13:22:36Z"
+  },
+  "operator": "Арипова Оксана Борис",
+  "totalSum": 266358,
+  "creditSum": 0,
+  "numberKkt": "0248320012009494",
+  "fiscalSign": 3418609577,
+  "prepaidSum": 0,
+  "retailPlace": "Торговый зал",
+  "shiftNumber": 317,
+  "cashTotalSum": 0,
+  "provisionSum": 0,
+  "ecashTotalSum": 266358,
+  "operationType": 1,
+  "redefine_mask": 0,
+  "requestNumber": 225,
+  "fiscalDriveNumber": "9288000100178241",
+  "messageFiscalSign": 9.297213351620024E18,
+  "retailPlaceAddress": "603065, г.Нижний Новгород, ул.Дьяконова, д.4А",
+  "appliedTaxationType": 1,
+  "fiscalDocumentNumber": 112602,
+  "fiscalDocumentFormatVer": 2,
+  "response": "{code=1, data={json={code=3, user=ООО \"СПАР МИДДЛ ВОЛГА\", items=[{nds=1, sum=25947, name=4005900147714 ШАМПУНЬ NIVEA СИЛА У, price=25947, quantity=1, paymentType=4, productType=1}, {nds=1, sum=35270, name=82 ДОМАШНЯЯ КУХНЯ, price=41988, quantity=0.84, paymentType=4, productType=1}, {nds=1, sum=8188, name=82 ДОМАШНЯЯ КУХНЯ, price=41990, quantity=0.195, paymentType=4, productType=1}, {nds=1, sum=2191, name=2419751000005 СОУС ЧЕСНОЧНЫЙ 80г, price=2191, quantity=1, paymentType=4, productType=1}, {nds=1, sum=788, name=1162 ПАКЕТ МАЙКА SCAN & G, price=394, quantity=2, paymentType=4, productType=1}, {nds=2, sum=10510, name=2413935000003 СОЧЕНЬ С ТВОРОГОМ ПО, price=10510, quantity=1, paymentType=4, productType=1}, {nds=2, sum=3488, name=1370 ПЛЮШКА МОСКОВСКАЯ ПО, price=1744, quantity=2, paymentType=4, productType=1}, {nds=1, sum=3235, name=4607040744732 НАПИТОК СИЛЬНОГАЗИРО, price=3235, quantity=1, paymentType=4, productType=1}, {nds=1, sum=6127, name=4607138220827 КВАС ДОМАШНИЙ SPAR N, price=6127, quantity=1, paymentType=4, productType=1}, {nds=1, sum=24192, name=2411244000004 ПИЦЦА ЛЮБИТЕЛЬСКАЯ П, price=6048, quantity=4, paymentType=4, productType=1}, {nds=1, sum=6048, name=1017 СУП ЛАПША С КУРИЦЕЙ, price=6048, quantity=1, paymentType=4, productType=1}, {nds=1, sum=12263, name=4612757233172 ШОКОЛАД ALTIER МОЛОЧ, price=12263, quantity=1, paymentType=4, productType=1}, {nds=2, sum=2621, name=1157 УКРОП СВЕЖИЙ 40г, price=2621, quantity=1, paymentType=4, productType=1}, {nds=2, sum=2589, name=44 КАПУСТА БЕЛОКОЧАННАЯ, price=3499, quantity=0.74, paymentType=4, productType=1}, {nds=2, sum=15508, name=113 КАПУСТА ЦВЕТНАЯ, price=17523, quantity=0.885, paymentType=4, productType=1}, {nds=2, sum=14245, name=4607012351722 СЕМЕЧКИ ОТ МАРТИНА О, price=14245, quantity=1, paymentType=4, productType=1}, {nds=2, sum=8748, name=1562 БАГЕТ С ВЕТЧИНОЙ И С, price=4374, quantity=2, paymentType=4, productType=1}, {nds=2, sum=17824, name=2360130000003 КОЛБАСА ВАРЕНАЯ ДОКТ, price=26289, quantity=0.678, paymentType=4, productType=1}, {nds=1, sum=23580, name=2413576000004 ПИРОЖНОЕ КОРЗИНОЧКА, price=23580, quantity=1, paymentType=4, productType=1}, {nds=2, sum=15384, name=4602358003663 МОРОЖЕНОЕ ПЛОМБИР КО, price=5128, quantity=3, paymentType=4, productType=1}, {nds=2, sum=27612, name=119 КАРТОФЕЛЬ МЫТЫЙ БЕЛЫ, price=4900, quantity=5.635, paymentType=4, productType=1}], nds10=10774, nds18=24638, fnsUrl=www.nalog.ru, region=52, userInn=5258056945  , dateTime=2021-08-29T16:22:00, kktRegId=0001144830058751    , metadata={id=3862842534617009153, ofdId=ofd9, address=603065,Россия,Нижегородская область,,г Нижний Новгород г.п.,,,ул Дьяконова элем. улично-дорожн.сети,,д. д 4А,,,,, subtype=receipt, receiveDate=2021-08-29T13:22:36Z}, operator=Арипова Оксана Борис, totalSum=266358, creditSum=0, numberKkt=0248320012009494, fiscalSign=3418609577, prepaidSum=0, retailPlace=Торговый зал, shiftNumber=317, cashTotalSum=0, provisionSum=0, ecashTotalSum=266358, operationType=1, redefine_mask=0, requestNumber=225, fiscalDriveNumber=9288000100178241, messageFiscalSign=9.297213351620024E18, retailPlaceAddress=603065, г.Нижний Новгород, ул.Дьяконова, д.4А, appliedTaxationType=1, fiscalDocumentNumber=112602, fiscalDocumentFormatVer=2}, html=<table class=\"b-check_table table\"><tbody><tr class=\"b-check_vblock-middle b-check_center\"><td colspan=\"5\">ООО \"СПАР МИДДЛ ВОЛГА\"</td></tr><tr class=\"b-check_vblock-middle b-check_center\"><td colspan=\"5\">603065, г.Нижний Новгород, ул.Дьяконова, д.4А</td></tr><tr class=\"b-check_vblock-middle b-check_center\"><td colspan=\"5\">ИНН 5258056945  </td></tr><tr class=\"b-check_vblock-middle b-check_center\"><td colspan=\"5\">&nbsp;</td></tr><tr class=\"b-check_vblock-middle b-check_center\"><td colspan=\"5\">29.08.2021 16:22</td></tr><tr class=\"b-check_vblock-middle b-check_center\"><td colspan=\"5\">Чек № 225</td></tr><tr class=\"b-check_vblock-middle b-check_center\"><td colspan=\"5\">Смена № 317</td></tr><tr class=\"b-check_vblock-middle b-check_center\"><td colspan=\"5\">Кассир Арипова Оксана Борис</td></tr><tr class=\"b-check_vblock-last b-check_center\"><td colspan=\"5\">Приход</td></tr><tr><td><strong>№</strong></td><td><strong>Название</strong></td><td><strong>Цена</strong></td><td><strong>Кол.</strong></td><td><strong>Сумма</strong></td></tr><tr class=\"b-check_item\"><td>1</td><td>4005900147714 ШАМПУНЬ NIVEA СИЛА У</td><td>259.47</td><td>1</td><td>259.47</td></tr><tr class=\"b-check_item\"><td>2</td><td>82 ДОМАШНЯЯ КУХНЯ</td><td>419.88</td><td>0.84</td><td>352.70</td></tr><tr class=\"b-check_item\"><td>3</td><td>82 ДОМАШНЯЯ КУХНЯ</td><td>419.90</td><td>0.195</td><td>81.88</td></tr><tr class=\"b-check_item\"><td>4</td><td>2419751000005 СОУС ЧЕСНОЧНЫЙ 80г</td><td>21.91</td><td>1</td><td>21.91</td></tr><tr class=\"b-check_item\"><td>5</td><td>1162 ПАКЕТ МАЙКА SCAN & G</td><td>3.94</td><td>2</td><td>7.88</td></tr><tr class=\"b-check_item\"><td>6</td><td>2413935000003 СОЧЕНЬ С ТВОРОГОМ ПО</td><td>105.10</td><td>1</td><td>105.10</td></tr><tr class=\"b-check_item\"><td>7</td><td>1370 ПЛЮШКА МОСКОВСКАЯ ПО</td><td>17.44</td><td>2</td><td>34.88</td></tr><tr class=\"b-check_item\"><td>8</td><td>4607040744732 НАПИТОК СИЛЬНОГАЗИРО</td><td>32.35</td><td>1</td><td>32.35</td></tr><tr class=\"b-check_item\"><td>9</td><td>4607138220827 КВАС ДОМАШНИЙ SPAR N</td><td>61.27</td><td>1</td><td>61.27</td></tr><tr class=\"b-check_item\"><td>10</td><td>2411244000004 ПИЦЦА ЛЮБИТЕЛЬСКАЯ П</td><td>60.48</td><td>4</td><td>241.92</td></tr><tr class=\"b-check_item\"><td>11</td><td>1017 СУП ЛАПША С КУРИЦЕЙ</td><td>60.48</td><td>1</td><td>60.48</td></tr><tr class=\"b-check_item\"><td>12</td><td>4612757233172 ШОКОЛАД ALTIER МОЛОЧ</td><td>122.63</td><td>1</td><td>122.63</td></tr><tr class=\"b-check_item\"><td>13</td><td>1157 УКРОП СВЕЖИЙ 40г</td><td>26.21</td><td>1</td><td>26.21</td></tr><tr class=\"b-check_item\"><td>14</td><td>44 КАПУСТА БЕЛОКОЧАННАЯ</td><td>34.99</td><td>0.74</td><td>25.89</td></tr><tr class=\"b-check_item\"><td>15</td><td>113 КАПУСТА ЦВЕТНАЯ</td><td>175.23</td><td>0.885</td><td>155.08</td></tr><tr class=\"b-check_item\"><td>16</td><td>4607012351722 СЕМЕЧКИ ОТ МАРТИНА О</td><td>142.45</td><td>1</td><td>142.45</td></tr><tr class=\"b-check_item\"><td>17</td><td>1562 БАГЕТ С ВЕТЧИНОЙ И С</td><td>43.74</td><td>2</td><td>87.48</td></tr><tr class=\"b-check_item\"><td>18</td><td>2360130000003 КОЛБАСА ВАРЕНАЯ ДОКТ</td><td>262.89</td><td>0.678</td><td>178.24</td></tr><tr class=\"b-check_item\"><td>19</td><td>2413576000004 ПИРОЖНОЕ КОРЗИНОЧКА</td><td>235.80</td><td>1</td><td>235.80</td></tr><tr class=\"b-check_item\"><td>20</td><td>4602358003663 МОРОЖЕНОЕ ПЛОМБИР КО</td><td>51.28</td><td>3</td><td>153.84</td></tr><tr class=\"b-check_item\"><td>21</td><td>119 КАРТОФЕЛЬ МЫТЫЙ БЕЛЫ</td><td>49.00</td><td>5.635</td><td>276.12</td></tr><tr class=\"b-check_vblock-first\"><td colspan=\"3\" class=\"b-check_itogo\">ИТОГО:</td><td></td><td class=\"b-check_itogo\">2663.58</td></tr><tr class=\"b-check_vblock-middle\"><td colspan=\"3\">Наличные</td><td></td><td>0.00</td></tr><tr class=\"b-check_vblock-middle\"><td colspan=\"3\">Карта</td><td></td><td>2663.58</td></tr><tr class=\"b-check_vblock-middle\"><td colspan=\"3\">НДС итога чека со ставкой 20%</td><td></td><td>246.38</td></tr><tr class=\"b-check_vblock-middle\"><td colspan=\"3\">НДС итога чека со ставкой 10%</td><td></td><td>107.74</td></tr><tr class=\"b-check_vblock-last\"><td colspan=\"5\">ВИД НАЛОГООБЛОЖЕНИЯ: </td></tr><tr class=\"b-check_vblock-first\"><td colspan=\"5\">РЕГ.НОМЕР ККТ: 0001144830058751    </td></tr><tr class=\"b-check_vblock-middle\"><td colspan=\"5\">ЗАВОД. №: </td></tr><tr class=\"b-check_vblock-middle\"><td colspan=\"5\">ФН: 9288000100178241</td></tr><tr class=\"b-check_vblock-middle\"><td colspan=\"5\">ФД: 112602</td></tr><tr class=\"b-check_vblock-middle\"><td colspan=\"5\">ФПД#: 3418609577</td></tr><tr class=\"b-check_vblock-last\"><td colspan=\"5\" class=\"b-check_center\"><img src=\"/qrcode/generate?text=t%3D20210829T1622%26s%3D2663.58%26fn%3D9288000100178241%26i%3D112602%26fp%3D3418609577%26n%3D1\" alt=\"QR код чека\" width=\"35%\" loading=\"lazy\" decoding=\"async\"></td></tr></tbody></table>}}"
+}

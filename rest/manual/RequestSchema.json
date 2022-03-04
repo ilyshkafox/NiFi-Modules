@@ -1,0 +1,15 @@
+{
+  "type": "record",
+  "name": "RegisterManual",
+  "fields": [
+    {
+      "name": "data",
+      "type": "string"
+    },
+    {
+      "name": "sum",
+      "type": "double",
+      "scale": 2
+    }
+  ]
+}

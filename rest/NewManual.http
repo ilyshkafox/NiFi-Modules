@@ -1,0 +1,9 @@
+POST http://localhost:8085/api/v1/register/manual
+Content-Type: application/json
+
+{
+  "data": "Яблочный сок",
+  "sum": "22.33"
+}
+
+###

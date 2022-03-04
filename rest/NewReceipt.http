@@ -1,0 +1,8 @@
+POST http://localhost:8085/api/v1/register/receipt
+Content-Type: application/json
+
+{
+  "data": "t=20210829T162200&s=2663.58&fn=9288000100178241&i=112602&fp=3418609577&n=1"
+}
+
+###

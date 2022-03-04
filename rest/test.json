@@ -1,0 +1,53 @@
+[{
+  "operation": "shift",
+  "spec": {
+    "code": [
+      "code",
+      "response.code"
+    ],
+    "data": [
+      "data",
+      "response.data"
+    ]
+  }
+}, {
+  "operation": "shift",
+  "spec": {
+    "data": {
+      "json": {
+        "*": "table.&",
+        "user": "table.userName",
+        "retailPlace": "table.retailPlaceName",
+        "items": [
+          "items",
+          "table.items"
+        ]
+      }
+    },
+    "response": "table.response"
+  }
+}, {
+  "operation": "ru.ilyshkafox.myreceipt.jolt.modules.JsonObjectMapperTransforms",
+  "spec": {
+    "table": {
+      "response": "=escapeJson",
+      "items": "=escapeJson",
+      "metadata": "=escapeJson"
+    }
+  }
+}, {
+  "operation": "modify-default-beta",
+  "spec": {
+    "table": {
+      "uuid": "${receipt.uuid}",
+      "create_at": "${now():toNumber()}"
+    }
+  }
+}, {
+  "operation": "modify-overwrite-beta",
+  "spec": {
+    "table": {
+      "create_at": "=toLong"
+    }
+  }
+}]
