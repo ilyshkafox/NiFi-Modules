@@ -1,4 +1,4 @@
-package ru.ilyshkafox.myreceipt.processors.MyReceiptModules.qrreceiptparse.dao;
+package ru.ilyshkafox.myreceipt.processors.MyReceiptModules.commons.qrreceiptparse.dao;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

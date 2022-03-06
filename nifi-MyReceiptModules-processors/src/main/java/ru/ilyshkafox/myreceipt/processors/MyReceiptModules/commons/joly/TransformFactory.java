@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package ru.ilyshkafox.myreceipt.processors.MyReceiptModules.joly;
+package ru.ilyshkafox.myreceipt.processors.MyReceiptModules.commons.joly;
 
 import com.bazaarvoice.jolt.*;
 import com.bazaarvoice.jolt.chainr.spec.ChainrEntry;

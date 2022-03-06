@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilyshkafox.myreceipt.processors.MyReceiptModules;
+package ru.ilyshkafox.myreceipt.processors.MyReceiptModules.commons;
 
 import lombok.Getter;
 import org.apache.nifi.annotation.behavior.ReadsAttribute;

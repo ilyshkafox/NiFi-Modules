@@ -63,6 +63,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.nifi</groupId>
+            <artifactId>nifi-dbcp-service-api</artifactId>
+            <version>${nifi.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.bazaarvoice.jolt</groupId>
             <artifactId>jolt-core</artifactId>
             <version>${jolt.version}</version>
@@ -73,11 +79,12 @@
             <version>${jolt.version}</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.apache.nifi</groupId>-->
-<!--            <artifactId>nifi-standard-utils</artifactId>-->
-<!--            <version>${nifi.version}</version>-->
-<!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.nifi</groupId>-->
+        <!--            <artifactId>nifi-standard-utils</artifactId>-->
+        <!--            <version>${nifi.version}</version>-->
+        <!--        </dependency>-->
 
 
         <dependency>

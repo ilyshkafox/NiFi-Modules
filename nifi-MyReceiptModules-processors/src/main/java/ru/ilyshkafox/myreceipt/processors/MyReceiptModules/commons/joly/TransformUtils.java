@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilyshkafox.myreceipt.processors.MyReceiptModules.joly;
+package ru.ilyshkafox.myreceipt.processors.MyReceiptModules.commons.joly;
 
 import com.bazaarvoice.jolt.ContextualTransform;
 import com.bazaarvoice.jolt.JoltTransform;

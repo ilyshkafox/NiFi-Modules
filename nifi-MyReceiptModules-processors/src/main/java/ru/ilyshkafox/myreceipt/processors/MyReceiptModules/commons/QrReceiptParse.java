@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilyshkafox.myreceipt.processors.MyReceiptModules;
+package ru.ilyshkafox.myreceipt.processors.MyReceiptModules.commons;
 
 import lombok.Getter;
 import org.apache.nifi.annotation.behavior.ReadsAttribute;
@@ -36,18 +36,16 @@ import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.nifi.schema.access.SchemaNotFoundException;
 import org.apache.nifi.serialization.RecordSetWriterFactory;
 import org.apache.nifi.serialization.SimpleRecordSchema;
-import org.apache.nifi.serialization.WriteResult;
 import org.apache.nifi.serialization.record.Record;
 import org.apache.nifi.serialization.record.RecordField;
 import org.apache.nifi.serialization.record.RecordFieldType;
 import org.apache.nifi.serialization.record.RecordSchema;
 import org.apache.nifi.serialization.record.util.DataTypeUtils;
-import ru.ilyshkafox.myreceipt.processors.MyReceiptModules.qrreceiptparse.dao.QrCodeReceipt;
-import ru.ilyshkafox.myreceipt.processors.MyReceiptModules.qrreceiptparse.services.QrCodeReceiptDecodeService;
+import ru.ilyshkafox.myreceipt.processors.MyReceiptModules.commons.qrreceiptparse.dao.QrCodeReceipt;
+import ru.ilyshkafox.myreceipt.processors.MyReceiptModules.commons.qrreceiptparse.services.QrCodeReceiptDecodeService;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.*;

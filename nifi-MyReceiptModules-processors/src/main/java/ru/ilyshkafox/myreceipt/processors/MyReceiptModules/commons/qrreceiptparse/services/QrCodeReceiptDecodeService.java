@@ -1,10 +1,10 @@
-package ru.ilyshkafox.myreceipt.processors.MyReceiptModules.qrreceiptparse.services;
+package ru.ilyshkafox.myreceipt.processors.MyReceiptModules.commons.qrreceiptparse.services;
 
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ru.ilyshkafox.myreceipt.processors.MyReceiptModules.qrreceiptparse.dao.QrCodeReceipt;
+import ru.ilyshkafox.myreceipt.processors.MyReceiptModules.commons.qrreceiptparse.dao.QrCodeReceipt;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

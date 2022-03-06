@@ -20,6 +20,7 @@ import org.apache.nifi.util.TestRunner;
 import org.apache.nifi.util.TestRunners;
 import org.junit.Before;
 import org.junit.Test;
+import ru.ilyshkafox.myreceipt.processors.MyReceiptModules.commons.QrReceiptParse;
 
 
 public class MyProcessorTest {

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.ilyshkafox.myreceipt.processors.MyReceiptModules;
+package ru.ilyshkafox.myreceipt.processors.MyReceiptModules.commons;
 
 import com.bazaarvoice.jolt.JoltTransform;
 import com.bazaarvoice.jolt.JsonUtils;
@@ -44,8 +44,8 @@ import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.nifi.util.StopWatch;
 import org.apache.nifi.util.StringUtils;
 import org.apache.nifi.util.file.classloader.ClassLoaderUtils;
-import ru.ilyshkafox.myreceipt.processors.MyReceiptModules.joly.TransformFactory;
-import ru.ilyshkafox.myreceipt.processors.MyReceiptModules.joly.TransformUtils;
+import ru.ilyshkafox.myreceipt.processors.MyReceiptModules.commons.joly.TransformFactory;
+import ru.ilyshkafox.myreceipt.processors.MyReceiptModules.commons.joly.TransformUtils;
 
 import java.io.FilenameFilter;
 import java.io.IOException;

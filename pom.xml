@@ -36,7 +36,6 @@
         <module>nifi-MyReceiptModules-processors</module>
         <module>nifi-MyReceiptModules-nar</module>
         <module>initializer-database</module>
-        <module>Jolt-Modules</module>
     </modules>
 
     <dependencies>
