@@ -33,8 +33,10 @@
     </properties>
 
     <modules>
-        <module>nifi-MyReceiptModules-processors</module>
-        <module>nifi-MyReceiptModules-nar</module>
+        <module>modules/custom/nifi-MyReceiptModules-processors</module>
+        <module>modules/custom/nifi-MyReceiptModules-nar</module>
+        <module>modules/vk/nifi-CashbackVk-processors</module>
+        <module>modules/vk/nifi-CashbackVk-nar</module>
         <module>initializer-database</module>
     </modules>
 
@@ -79,7 +81,7 @@
                         <configuration>
                             <target>
                                 <copy file="${project.build.directory}/${project.artifactId}-${project.version}.nar"
-                                      todir="${project.basedir}/../build/libs"
+                                      todir="${project.basedir}/../../../build/libs"
                                       failonerror="false"/>
                             </target>
                         </configuration>
