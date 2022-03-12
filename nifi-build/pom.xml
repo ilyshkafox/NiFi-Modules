@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>nifi-modules</artifactId>
+        <groupId>ru.ilyshkafox.nifi</groupId>
+        <version>v22.3</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>nifi-build</artifactId>
+
+    <properties>
+        <dockerfile.push.skip>true</dockerfile.push.skip>
+        <nifi.image.name>apache/nifi</nifi.image.name>
+        <nifi.image.tag>1.15.3</nifi.image.tag>
+        <docker.image.name>openjdk</docker.image.name>
+        <docker.image.tag>11-jre</docker.image.tag>
+        <docker.maintainer><![CDATA[ilyshkafox <ilyshkafox@mail.ru>]]></docker.maintainer>
+    </properties>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeTypes>nar</includeTypes>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.4.13</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <id>default</id>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <configuration>
+                            <buildArgs>
+                                <NIFI_IMAGE_NAME>${nifi.image.name}</NIFI_IMAGE_NAME>
+                                <NIFI_IMAGE_TAG>${nifi.image.tag}</NIFI_IMAGE_TAG>
+                                <IMAGE_NAME>${docker.image.name}</IMAGE_NAME>
+                                <IMAGE_TAG>${docker.image.tag}</IMAGE_TAG>
+                                <MAINTAINER>${docker.maintainer}</MAINTAINER>
+                                <UID>1000</UID>
+                                <GID>1000</GID>
+                            </buildArgs>
+                            <repository>ilyshka/apache-nifi</repository>
+                            <tag>${project.version}-dockermaven</tag>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>ru.ilyshkafox.nifi</groupId>
+            <artifactId>nifi-VkClient-service-api-nar</artifactId>
+            <version>${project.version}</version>
+            <type>nar</type>
+        </dependency>
+    </dependencies>
+</project>

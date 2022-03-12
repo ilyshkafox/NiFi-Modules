@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>nifi-nar-bundles</artifactId>
+        <groupId>ru.ilyshkafox.nifi</groupId>
+        <version>v22.3</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>nifi-VkClient-bundle</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>nifi-VkClient-service-api</module>
+        <module>nifi-VkClient-service-api-nar</module>
+        <module>nifi-VkClient-service</module>
+        <module>nifi-VkClient-service-nar</module>
+    </modules>
+
+
+</project>
