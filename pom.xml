@@ -26,7 +26,7 @@
 
     <groupId>ru.ilyshkafox.nifi</groupId>
     <artifactId>nifi-modules</artifactId>
-    <version>v22.3</version>
+    <version>0.1</version>
     <packaging>pom</packaging>
 
 
@@ -205,6 +205,13 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.22</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -566,6 +573,25 @@
                         <exclude>DEPENDENCIES
                         </exclude> <!-- auto generated file by apache's maven config while building sources.zip -->
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <!--                        <path>-->
+                        <!--                            <groupId>org.mapstruct</groupId>-->
+                        <!--                            <artifactId>mapstruct-processor</artifactId>-->
+                        <!--                            <version>${mapstruct.version}</version>-->
+                        <!--                        </path>-->
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
         </plugins>

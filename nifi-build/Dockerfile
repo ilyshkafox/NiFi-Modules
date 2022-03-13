@@ -27,8 +27,8 @@ RUN groupadd -g ${GID} nifi || groupmod -n nifi `getent group ${GID} | cut -d: -
     && apt-get install -y jq xmlstarlet procps
 
 COPY --chown=nifi:nifi --from=original $NIFI_BASE_DIR $NIFI_BASE_DIR
-COPY --chown=nifi:nifi  drivers $NIFI_BASE_DIR/drivers
-COPY --chown=nifi:nifi  target/lib/*.nar $NIFI_HOME/lib
+COPY --chown=nifi:nifi  drivers $NIFI_HOME/drivers
+COPY --chown=nifi:nifi  target/lib/*.nar $NIFI_HOME/lib/
 COPY --chown=nifi:nifi  jolt $NIFI_HOME/jolt
 
 VOLUME ${NIFI_LOG_DIR} \

@@ -9,15 +9,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>nifi-VkClient-bundle</artifactId>
+    <artifactId>nifi-MyReceiptModules-bundle</artifactId>
     <packaging>pom</packaging>
 
     <modules>
-        <module>nifi-VkClient-service-api</module>
-        <module>nifi-VkClient-service-api-nar</module>
-        <module>nifi-VkClient-service</module>
-        <module>nifi-VkClient-service-nar</module>
+        <module>nifi-MyReceiptModules-processors</module>
+        <module>nifi-MyReceiptModules-nar</module>
     </modules>
-
 
 </project>

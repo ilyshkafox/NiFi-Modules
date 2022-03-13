@@ -1,7 +1,15 @@
 version: "3"
 services:
+  postgres:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "outlay"
+      POSTGRES_PASSWORD: "outlay"
+    ports:
+      - "5432:5432"
   nifi:
-    image: ilyshka/apache-nifi:1.15.3-11jre
+    image: ilyshka/apache-nifi:0.1-dockermaven
     ports:
       - "8080:8080"
       - "8085:8085"

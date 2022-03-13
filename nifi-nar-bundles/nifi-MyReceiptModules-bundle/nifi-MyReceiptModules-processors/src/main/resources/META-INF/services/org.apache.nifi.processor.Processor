@@ -1,0 +1,4 @@
+ru.ilyshkafox.myreceipt.processors.MyReceiptModules.commons.QrReceiptParse
+ru.ilyshkafox.myreceipt.processors.MyReceiptModules.commons.ClearFlowFile
+ru.ilyshkafox.myreceipt.processors.MyReceiptModules.commons.JoltTransformJSON_1_16_0
+ru.ilyshkafox.myreceipt.processors.MyReceiptModules.statistic.StatisticSetCategory

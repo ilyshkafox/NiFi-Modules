@@ -5,7 +5,7 @@
     <parent>
         <artifactId>nifi-modules</artifactId>
         <groupId>ru.ilyshkafox.nifi</groupId>
-        <version>v22.3</version>
+        <version>0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -73,6 +73,13 @@
         <dependency>
             <groupId>ru.ilyshkafox.nifi</groupId>
             <artifactId>nifi-VkClient-service-api-nar</artifactId>
+            <version>${project.version}</version>
+            <type>nar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.ilyshkafox.nifi</groupId>
+            <artifactId>nifi-MyReceiptModules-nar</artifactId>
             <version>${project.version}</version>
             <type>nar</type>
         </dependency>

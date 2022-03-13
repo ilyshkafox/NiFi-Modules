@@ -6,7 +6,7 @@
     <parent>
         <groupId>ru.ilyshkafox.nifi</groupId>
         <artifactId>nifi-VkClient-bundle</artifactId>
-        <version>v22.3</version>
+        <version>0.1</version>
     </parent>
 
     <artifactId>nifi-VkClient-service</artifactId>
