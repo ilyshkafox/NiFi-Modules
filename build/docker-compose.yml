@@ -10,8 +10,11 @@ services:
       - "5432:5432"
   nifi:
     image: ilyshka/apache-nifi:0.1-dockermaven
+    volumes:
+      - ./flow.xml.gz:/flow.xml.gz
     ports:
       - "8080:8080"
       - "8085:8085"
     environment:
-      - NIFI_WEB_HTTP_PORT=8080
+      NIFI_WEB_HTTP_PORT: 8080
+      NIFI_SENSITIVE_PROPS_KEY: ${SECRET_KEY}

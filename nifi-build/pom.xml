@@ -13,8 +13,10 @@
 
     <properties>
         <dockerfile.push.skip>true</dockerfile.push.skip>
+
         <nifi.image.name>apache/nifi</nifi.image.name>
         <nifi.image.tag>1.15.3</nifi.image.tag>
+
         <docker.image.name>openjdk</docker.image.name>
         <docker.image.tag>11-jre</docker.image.tag>
         <docker.maintainer><![CDATA[ilyshkafox <ilyshkafox@mail.ru>]]></docker.maintainer>
