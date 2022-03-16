@@ -225,6 +225,12 @@
                 <version>${nifi.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.nifi</groupId>
+                <artifactId>nifi-dbcp-service-api</artifactId>
+                <version>${nifi.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <!-- Managed dependency versions applicable to all modules -->
             <dependency>
                 <groupId>org.apache.commons</groupId>

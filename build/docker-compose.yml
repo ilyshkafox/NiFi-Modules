@@ -10,8 +10,6 @@ services:
       - "5432:5432"
   nifi:
     image: ilyshka/apache-nifi:0.1-dockermaven
-    volumes:
-      - ./flow.xml.gz:/flow.xml.gz
     ports:
       - "8080:8080"
       - "8085:8085"
