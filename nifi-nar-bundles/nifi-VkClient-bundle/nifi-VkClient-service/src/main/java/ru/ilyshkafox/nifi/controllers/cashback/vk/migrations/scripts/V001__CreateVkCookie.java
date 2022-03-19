@@ -1,13 +1,11 @@
 package ru.ilyshkafox.nifi.controllers.cashback.vk.migrations.scripts;
 
-import org.jooq.SQLDialect;
+import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 
-import java.sql.Connection;
-
 public abstract class V001__CreateVkCookie {
-    public static void migrate(Connection connection, SQLDialect dialect) {
+    public static int migrate(final DSLContext dsl) {
         // Create Table If Not Exists
         var tableName = DSL.name("vk_cookie");
         var id = DSL.field(DSL.name("id"), SQLDataType.BIGINT.notNull());
@@ -26,7 +24,7 @@ public abstract class V001__CreateVkCookie {
         var version = DSL.field(DSL.name("version"), SQLDataType.INTEGER);
 
 
-        DSL.using(connection, dialect)
+        dsl
                 .createTableIfNotExists(tableName)
                 .columns(id
                         , url
@@ -46,5 +44,7 @@ public abstract class V001__CreateVkCookie {
                 .primaryKey(id)
                 .constraint(DSL.unique(name, domain, path))
                 .execute();
+        return 1;
     }
+
 }

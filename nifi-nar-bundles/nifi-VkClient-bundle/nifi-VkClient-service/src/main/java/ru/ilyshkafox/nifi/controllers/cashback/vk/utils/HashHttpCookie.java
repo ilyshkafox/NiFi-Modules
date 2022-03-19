@@ -18,7 +18,7 @@ public abstract class HashHttpCookie {
                         .thenComparing(HttpCookie::getPath)
                         .thenComparing(HttpCookie::getValue)
                 )
-                .map(this::getHashCode)
+                .map(HashHttpCookie::getHashCode)
                 .forEach(buffer::putLong);
         return getCRC32Checksum(buffer.array());
     }
