@@ -15,8 +15,8 @@ import org.apache.nifi.controller.ConfigurationContext;
 import org.apache.nifi.dbcp.DBCPService;
 import org.apache.nifi.reporting.InitializationException;
 import org.jooq.SQLDialect;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.dao.J2TeamCookies;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.migrations.UpdateDataBaseUtils;
-import ru.ilyshkafox.nifi.controllers.cashback.vk.utils.HashHttpCookie;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -29,12 +29,13 @@ import static ru.ilyshkafox.nifi.controllers.cashback.vk.VkClientServiceProperty
 @Tags({"ilyshkafox", "client", "vk", "cashback"})
 @CapabilityDescription("Клиент подключения к VK.")
 public class VkClientServiceImpl extends AbstractControllerService implements VkClientService {
-    private final static String HASH_J2TEAM_COOKIE_KEY = "cookie.hash";
-    private final static String MIGRATION_VERSION = "migration.version";
     private final static Scope STATE_SCOPE = Scope.CLUSTER;
 
     @Getter
-    private final List<PropertyDescriptor> supportedPropertyDescriptors = List.of(CONNECTION_POOL, SCHEMA_NAME, DATABASE_DIALECT, REMIXLGCK);
+    private final List<PropertyDescriptor> supportedPropertyDescriptors = List.of(
+            CONNECTION_POOL, SCHEMA_NAME, DATABASE_DIALECT,
+            J2TEAM_COOKIE
+    );
 
     private DBCPService connectionPool;
 
@@ -51,6 +52,7 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
 
         initConnectionPool(property);
         migration(property);
+        J2TeamCookies j2teamCooke = property.getJ2teamCooke();
 
         stateManager.setState(state, STATE_SCOPE);
     }
@@ -75,6 +77,12 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
             throw new InitializationException("Ошибка при выполнении миграции");
         }
     }
+
+
+    private void checkAndUpdateCooke(final VkClientServiceProperty property) throws InitializationException {
+
+    }
+
 
     private void truncateTables() throws InitializationException {
         try (Connection connection = getConnection();) {

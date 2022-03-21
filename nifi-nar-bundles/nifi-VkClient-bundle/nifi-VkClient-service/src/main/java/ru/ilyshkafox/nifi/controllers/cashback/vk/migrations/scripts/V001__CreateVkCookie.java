@@ -8,7 +8,7 @@ public abstract class V001__CreateVkCookie {
     public static int migrate(final DSLContext dsl) {
         // Create Table If Not Exists
         var tableName = DSL.name("vk_cookie");
-        var id = DSL.field(DSL.name("id"), SQLDataType.BIGINT.notNull());
+        var id = DSL.field(DSL.name("id"), SQLDataType.BIGINT.notNull().identity(true));
         var url = DSL.field(DSL.name("url"), SQLDataType.VARCHAR.notNull());
         var name = DSL.field(DSL.name("name"), SQLDataType.VARCHAR.notNull());
         var domain = DSL.field(DSL.name("domain"), SQLDataType.VARCHAR.notNull());

@@ -9,6 +9,10 @@ import org.apache.nifi.expression.ExpressionLanguageScope;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.nifi.reporting.InitializationException;
 import org.jooq.SQLDialect;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.dao.J2TeamCookies;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.utils.Assert;
+
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class VkClientServiceProperty {
@@ -42,24 +46,19 @@ public class VkClientServiceProperty {
             .expressionLanguageSupported(ExpressionLanguageScope.NONE)
             .required(true)
             .build();
-
-    static final PropertyDescriptor REMIXLGCK = new PropertyDescriptor.Builder()
-            .name("remixlgck")
-            .displayName("Индефикатор доверенного браузера")
-            .description("Данное действие необходимо, чтобы не вводить капчку. " +
-                    "Для получения значениея: \n" +
-                    "1) Откройте сраницу VK в браузере.\n" +
-                    "2) Войдите в страничку VK? которую хотите привязать к сервису.\n" +
-                    "3) Нажмите F12.\n" +
-                    "4) Перейдите на вкладку Network.\n" +
-                    "5) Обновите сраницу (F5).\n" +
-                    "6) Выделете первый запрос, или любой другой, который адресуеться на страничку.\n" +
-                    "7) На вкладке Header найти в параметре cookie.\n" +
-                    "8) В cookie найдите значение remixlgck - Это личный индетификатор клиента (браузера)\n" +
-                    "9) Желательно зайти на вкладку Application -> Storage и очистить данные. Чтобы браузер получил новый индетификатор.0"
+    protected static final PropertyDescriptor J2TEAM_COOKIE = new PropertyDescriptor.Builder()
+            .name("j2team-cookie")
+            .displayName("J2Team cookie")
+            .description("Json куки от плагина J2TEAM.\n " +
+                    "https://chrome.google.com/webstore/detail/j2team-cookies/okpidcojinmlaakglciglbpcpajaibco/reviews \n" +
+                    "Данное поле необходимо вставлять без шифрования паролем. Чистый json.\n" +
+                    "После того как вы скопируете куки, необходимо очистить их из браузера.\n" +
+                    "Данное действие необходимо, чтобы получить уже авторизированный аккаунт, и не проходить проверку капчи.\n" +
+                    "Если вы хотите выйти из аккаунта, то в настроках VK удалите данное устройтсво авторизации.\n" +
+                    "Куки необходимо получить из поддомена: https://login.vk.com/favicon.ico"
             )
+            .addValidator(J2TeamValidator.JSON_FORMAT_VALIDATOR)
             .expressionLanguageSupported(ExpressionLanguageScope.VARIABLE_REGISTRY)
-            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .sensitive(true)
             .build();
 
@@ -73,9 +72,6 @@ public class VkClientServiceProperty {
         return context.getProperty(CONNECTION_POOL).asControllerService(DBCPService.class);
     }
 
-    public String getRemixlgck() throws InitializationException {
-        return context.getProperty(REMIXLGCK).evaluateAttributeExpressions().getValue();
-    }
 
     public String getSchemaName() throws InitializationException {
         return context.getProperty(SCHEMA_NAME).evaluateAttributeExpressions().getValue();
@@ -84,5 +80,17 @@ public class VkClientServiceProperty {
 
     public SQLDialect getSqlDialect() throws InitializationException {
         return SQLDialect.valueOf(context.getProperty(DATABASE_DIALECT).evaluateAttributeExpressions().getValue());
+    }
+
+    public J2TeamCookies getJ2teamCooke() throws InitializationException {
+        String value = context.getProperty(J2TEAM_COOKIE).evaluateAttributeExpressions().getValue();
+        try {
+            J2TeamCookies j2TeamCookies = objectMapper.readValue(value, J2TeamCookies.class);
+            Assert.isTrue(J2TeamValidator.ALLOW_URL.contains(j2TeamCookies.getUrl()), "Необходимо куки от login VK. Получено: \"" + j2TeamCookies.getUrl() + "\", разрешено: " + J2TeamValidator.ALLOW_URL.stream().collect(Collectors.joining("\", \"", "[\"", "\"]")) + ".");
+            Assert.notEmpty(j2TeamCookies.getCookies(), "Не найдены куки для VK. Пустой Json");
+            return j2TeamCookies;
+        } catch (Exception e) {
+            throw new InitializationException(e.getMessage(), e);
+        }
     }
 }

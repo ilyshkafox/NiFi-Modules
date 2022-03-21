@@ -2,28 +2,25 @@ package ru.ilyshkafox.nifi.controllers.cashback.vk.migrations;
 
 import org.apache.nifi.reporting.InitializationException;
 import org.jooq.DSLContext;
-import org.jooq.Field;
 import org.jooq.SQLDialect;
-import org.jooq.Table;
 import org.jooq.impl.DSL;
-import org.jooq.impl.SQLDataType;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.migrations.scripts.V001__CreateVkCookie;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.repo.KeyValueRepo;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import static ru.ilyshkafox.nifi.controllers.cashback.vk.repo.KeyValueRepo.*;
+
 public abstract class UpdateDataBaseUtils {
-    public static final Table<?> KEY_VALUE_STORAGE = DSL.table(DSL.name("key_value_storage"));
-    public static final Field<Long> ID = DSL.field(DSL.name("id"), SQLDataType.BIGINT.notNull());
-    public static final Field<String> KEY = DSL.field(DSL.name("key"), SQLDataType.VARCHAR.notNull());
-    public static final Field<String> VALUE = DSL.field(DSL.name("value"), SQLDataType.VARCHAR);
     private static final String KEY_MIGRATION = "migration";
 
     public static void migrate(final Connection connection, final String schema, final SQLDialect dialect) throws SQLException {
         DSLContext dsl = DSL.using(connection, dialect);
+        KeyValueRepo repo = new KeyValueRepo(dsl);
 
         beforeMigration(dsl, connection, schema);
-        migration(dsl);
+        migration(dsl, repo);
     }
 
     private static void beforeMigration(final DSLContext dsl, Connection connection, String schema) throws SQLException {
@@ -31,14 +28,15 @@ public abstract class UpdateDataBaseUtils {
         createIfNotExistsKeyValueStorage(dsl);
     }
 
-    private static void migration(final DSLContext dsl) throws SQLException {
-        int version = getCurrentMigrationVersion(dsl);
+    private static void migration(final DSLContext dsl, final KeyValueRepo repo) throws SQLException {
+        String value = repo.getValue(KEY_MIGRATION);
+        int version = value == null ? 0 : Integer.parseInt(value);
         int newVersion = 0;
 
         // Migration
         if (version <= newVersion++) V001__CreateVkCookie.migrate(dsl);
 
-        setCurrentMigrationVersion(dsl, newVersion);
+        repo.setValue(KEY_MIGRATION, String.valueOf(newVersion));
     }
 
 
@@ -55,26 +53,6 @@ public abstract class UpdateDataBaseUtils {
                 .execute();
     }
 
-
-    private static int getCurrentMigrationVersion(final DSLContext dsl) throws SQLException {
-        String value = dsl
-                .select(VALUE)
-                .from(KEY_VALUE_STORAGE)
-                .where(KEY.eq(KEY_MIGRATION))
-                .fetchOne(VALUE);
-        return value == null ? 0 : Integer.parseInt(value);
-    }
-
-
-    private static void setCurrentMigrationVersion(final DSLContext dsl, final int version) throws SQLException {
-        dsl
-                .insertInto(KEY_VALUE_STORAGE, KEY, VALUE)
-                .values(KEY_MIGRATION, String.valueOf(version))
-                .onDuplicateKeyUpdate()
-                .set(VALUE, String.valueOf(version))
-                .where(KEY.eq(KEY_MIGRATION))
-                .execute();
-    }
 
     public static void truncateTable(Connection connection, String name) throws InitializationException {
         DSL.using(connection)
