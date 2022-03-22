@@ -14,9 +14,11 @@ import org.apache.nifi.controller.AbstractControllerService;
 import org.apache.nifi.controller.ConfigurationContext;
 import org.apache.nifi.dbcp.DBCPService;
 import org.apache.nifi.reporting.InitializationException;
-import org.jooq.SQLDialect;
+import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.dao.J2TeamCookies;
-import ru.ilyshkafox.nifi.controllers.cashback.vk.migrations.UpdateDataBaseUtils;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.repo.KeyValueRepo;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.utils.UpdateDataBaseUtils;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -33,15 +35,14 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
 
     @Getter
     private final List<PropertyDescriptor> supportedPropertyDescriptors = List.of(
-            CONNECTION_POOL, SCHEMA_NAME, DATABASE_DIALECT,
-            J2TEAM_COOKIE
+            CONNECTION_POOL, SCHEMA_NAME, J2TEAM_COOKIE
     );
 
     private DBCPService connectionPool;
 
 
     @OnEnabled
-    public void onConfigured(final ConfigurationContext context) throws InitializationException, IOException {
+    public void onConfigured(final ConfigurationContext context) throws InitializationException, IOException, SQLException {
         var log = getLogger();
         log.info("Запуск VkClient сервиса.");
 
@@ -51,8 +52,13 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
         var property = new VkClientServiceProperty(context);
 
         initConnectionPool(property);
-        migration(property);
+        migration( property);
         J2TeamCookies j2teamCooke = property.getJ2teamCooke();
+
+        DSLContext using = DSL.using(getConnection());
+        using.setSchema(property.getSchemaName()).execute();
+        KeyValueRepo test = new KeyValueRepo(using);
+        test.setValue("test.key", "TestValue");
 
         stateManager.setState(state, STATE_SCOPE);
     }
@@ -67,12 +73,11 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
     }
 
 
-    private void migration(final VkClientServiceProperty property) throws InitializationException {
+    private void migration( final VkClientServiceProperty property) throws InitializationException {
         String schemaName = property.getSchemaName();
-        SQLDialect sqlDialect = property.getSqlDialect();
 
         try (Connection connection = connectionPool.getConnection();) {
-            UpdateDataBaseUtils.migrate(connection, schemaName, sqlDialect);
+            UpdateDataBaseUtils.migrate(this, connection, schemaName);
         } catch (SQLException e) {
             throw new InitializationException("Ошибка при выполнении миграции");
         }

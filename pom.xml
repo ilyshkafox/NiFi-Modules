@@ -63,6 +63,8 @@
         <org.apache.httpcomponents.httpclient.version>4.5.13</org.apache.httpcomponents.httpclient.version>
         <org.apache.httpcomponents.httpcore.version>4.4.15</org.apache.httpcomponents.httpcore.version>
         <okhttp.version>4.9.3</okhttp.version>
+        <flyway.version>8.5.4</flyway.version>
+        <jooq.version>3.16.5</jooq.version>
     </properties>
 
 
