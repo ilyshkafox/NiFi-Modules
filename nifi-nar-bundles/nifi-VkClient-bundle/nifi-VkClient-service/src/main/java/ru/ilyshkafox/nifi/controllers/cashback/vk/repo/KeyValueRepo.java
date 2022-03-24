@@ -12,7 +12,7 @@ import static org.jooq.generated.tables.Storage.STORAGE;
 
 @RequiredArgsConstructor
 public class KeyValueRepo {
-    public static final Storage TABLE = STORAGE.as(DSL.name(STORAGE.getName()));
+    public final Storage TABLE = STORAGE.as(DSL.name(STORAGE.getName()));
 
     private final DSLContext dsl;
 

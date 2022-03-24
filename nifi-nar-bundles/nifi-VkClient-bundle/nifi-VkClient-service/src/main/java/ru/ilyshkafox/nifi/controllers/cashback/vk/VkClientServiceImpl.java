@@ -20,6 +20,7 @@ import ru.ilyshkafox.nifi.controllers.cashback.vk.dao.J2TeamCookies;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.repo.KeyValueRepo;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.utils.UpdateDataBaseUtils;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -32,17 +33,20 @@ import static ru.ilyshkafox.nifi.controllers.cashback.vk.VkClientServiceProperty
 @CapabilityDescription("Клиент подключения к VK.")
 public class VkClientServiceImpl extends AbstractControllerService implements VkClientService {
     private final static Scope STATE_SCOPE = Scope.CLUSTER;
+    private KeyValueRepo keyValueRepo;
 
     @Getter
     private final List<PropertyDescriptor> supportedPropertyDescriptors = List.of(
             CONNECTION_POOL, SCHEMA_NAME, J2TEAM_COOKIE
     );
 
-    private DBCPService connectionPool;
+    private DBCPService connectionPool = null;
+    private DataSource dataSource;
+    private DSLContext dsl = null;
 
 
     @OnEnabled
-    public void onConfigured(final ConfigurationContext context) throws InitializationException, IOException, SQLException {
+    public void onMigration(final ConfigurationContext context) throws InitializationException, IOException, SQLException {
         var log = getLogger();
         log.info("Запуск VkClient сервиса.");
 
@@ -51,14 +55,15 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
 
         var property = new VkClientServiceProperty(context);
 
-        initConnectionPool(property);
-        migration( property);
+        initDataSource(property);
+        initDsl(property);
+        migration(property);
+
         J2TeamCookies j2teamCooke = property.getJ2teamCooke();
 
-        DSLContext using = DSL.using(getConnection());
-        using.setSchema(property.getSchemaName()).execute();
-        KeyValueRepo test = new KeyValueRepo(using);
-        test.setValue("test.key", "TestValue");
+
+        keyValueRepo = new KeyValueRepo(using);
+
 
         stateManager.setState(state, STATE_SCOPE);
     }
@@ -68,18 +73,20 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
 
     }
 
-    private void initConnectionPool(final VkClientServiceProperty property) throws InitializationException {
+    private void initDataSource(final VkClientServiceProperty property) throws InitializationException {
         connectionPool = property.crateConnectionPool();
+        dataSource = new DBCPServiceDataSourceBridge(connectionPool);
+        dsl = DSL.using(dataSource, property.getSqlDialect());
+        dsl.setSchema(property.getSchemaName()).execute();
     }
 
 
-    private void migration( final VkClientServiceProperty property) throws InitializationException {
+    private void migration(final VkClientServiceProperty property) throws InitializationException {
         String schemaName = property.getSchemaName();
-
-        try (Connection connection = connectionPool.getConnection();) {
-            UpdateDataBaseUtils.migrate(this, connection, schemaName);
+        try {
+            UpdateDataBaseUtils.migrate(this, dataSource, schemaName, property.getSqlDialect());
         } catch (SQLException e) {
-            throw new InitializationException("Ошибка при выполнении миграции");
+            throw new InitializationException("Ошибка при выполнении миграции", e);
         }
     }
 

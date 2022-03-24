@@ -37,6 +37,16 @@ public class VkClientServiceProperty {
             .defaultValue("vk")
             .build();
 
+    static final PropertyDescriptor DATABASE_DIALECT = new PropertyDescriptor.Builder()
+            .name("database-dialect")
+            .displayName("Sql Dialect")
+            .description("Диалект БД.")
+            .allowableValues(SQLDialect.POSTGRES.getName())
+            .defaultValue(SQLDialect.POSTGRES.getName())
+            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+            .expressionLanguageSupported(ExpressionLanguageScope.NONE)
+            .required(true)
+            .build();
 
     protected static final PropertyDescriptor J2TEAM_COOKIE = new PropertyDescriptor.Builder()
             .name("j2team-cookie")
@@ -70,6 +80,9 @@ public class VkClientServiceProperty {
     }
 
 
+    public SQLDialect getSqlDialect() throws InitializationException {
+        return SQLDialect.valueOf(context.getProperty(DATABASE_DIALECT).evaluateAttributeExpressions().getValue());
+    }
 
     public J2TeamCookies getJ2teamCooke() throws InitializationException {
         String value = context.getProperty(J2TEAM_COOKIE).evaluateAttributeExpressions().getValue();
