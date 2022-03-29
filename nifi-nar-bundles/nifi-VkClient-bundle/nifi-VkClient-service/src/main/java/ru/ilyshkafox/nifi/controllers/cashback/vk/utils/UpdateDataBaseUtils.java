@@ -25,7 +25,7 @@ public abstract class UpdateDataBaseUtils {
                     .load();
             flyway.migrate();
         } else {
-            throw new RuntimeException("Yt поддерживаемы тип данныз");
+            throw new RuntimeException("Не поддерживаемы тип данныз");
         }
 
 

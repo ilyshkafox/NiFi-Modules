@@ -9,20 +9,28 @@ import org.apache.nifi.annotation.documentation.Tags;
 import org.apache.nifi.annotation.lifecycle.OnDisabled;
 import org.apache.nifi.annotation.lifecycle.OnEnabled;
 import org.apache.nifi.components.PropertyDescriptor;
-import org.apache.nifi.components.state.Scope;
 import org.apache.nifi.controller.AbstractControllerService;
 import org.apache.nifi.controller.ConfigurationContext;
 import org.apache.nifi.dbcp.DBCPService;
 import org.apache.nifi.reporting.InitializationException;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.cookieencoder.AesCookieEncoder;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.cookieencoder.NoCookieEncoder;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.cookiestore.VkCookieStore;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.dao.J2TeamCookies;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.repo.CookieRepo;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.repo.KeyValueRepo;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.utils.Assert;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.utils.HashUtils;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.utils.J2TeamCookiesMapper;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.utils.UpdateDataBaseUtils;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.Connection;
+import java.net.CookieStore;
+import java.net.HttpCookie;
+import java.net.URI;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -32,12 +40,19 @@ import static ru.ilyshkafox.nifi.controllers.cashback.vk.VkClientServiceProperty
 @Tags({"ilyshkafox", "client", "vk", "cashback"})
 @CapabilityDescription("Клиент подключения к VK.")
 public class VkClientServiceImpl extends AbstractControllerService implements VkClientService {
-    private final static Scope STATE_SCOPE = Scope.CLUSTER;
+    private final static String HASH_COOKIE_KEY = "vk.cookie.hash";
+    private final static String STORE_ENCODE_COOKIE_KEY = "vk.cookie.encoder.class";
+    private final static String STORE_PASSWORD_COOKIE_KEY = "vk.cookie.password.hash";
     private KeyValueRepo keyValueRepo;
+    private CookieEncoder cockeEncoder;
+    private CookieRepo cookieRepo;
+    private CookieStore cookieStore;
+
 
     @Getter
     private final List<PropertyDescriptor> supportedPropertyDescriptors = List.of(
-            CONNECTION_POOL, SCHEMA_NAME, J2TEAM_COOKIE
+            CONNECTION_POOL, DATABASE_DIALECT, SCHEMA_NAME,
+            J2TEAM_COOKIE, COOKIE_ENCODER, COOKIE_ENCODE_KEY
     );
 
     private DBCPService connectionPool = null;
@@ -50,27 +65,23 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
         var log = getLogger();
         log.info("Запуск VkClient сервиса.");
 
-        var stateManager = getStateManager();
-        var state = stateManager.getState(STATE_SCOPE).toMap();
-
         var property = new VkClientServiceProperty(context);
 
         initDataSource(property);
-        initDsl(property);
+        initRepository(property);
         migration(property);
+        checkAndUpdateCooke(property);
 
-        J2TeamCookies j2teamCooke = property.getJ2teamCooke();
-
-
-        keyValueRepo = new KeyValueRepo(using);
-
-
-        stateManager.setState(state, STATE_SCOPE);
     }
 
     @OnDisabled
     public void shutdown() {
-
+        keyValueRepo = null;
+        dataSource = null;
+        cookieRepo = null;
+        connectionPool = null;
+        cockeEncoder = null;
+        dsl = null;
     }
 
     private void initDataSource(final VkClientServiceProperty property) throws InitializationException {
@@ -80,6 +91,12 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
         dsl.setSchema(property.getSchemaName()).execute();
     }
 
+    private void initRepository(final VkClientServiceProperty property) throws InitializationException {
+        keyValueRepo = new KeyValueRepo(dsl);
+        cookieRepo = new CookieRepo(dsl);
+        cockeEncoder = getEncode(property);
+        cookieStore = new VkCookieStore(cookieRepo, cockeEncoder);
+    }
 
     private void migration(final VkClientServiceProperty property) throws InitializationException {
         String schemaName = property.getSchemaName();
@@ -90,25 +107,52 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
         }
     }
 
-
     private void checkAndUpdateCooke(final VkClientServiceProperty property) throws InitializationException {
+        J2TeamCookies j2TeamCookies = property.loadVkJ2teamCooke();
+        URI uri = URI.create(j2TeamCookies.getUrl());
+        List<HttpCookie> httpCookie = J2TeamCookiesMapper.map(j2TeamCookies);
+
+
+        long curHash = keyValueRepo.get(HASH_COOKIE_KEY).map(Long::parseLong).orElse(-1L);
+        long newHash = HashUtils.getCookieHash(httpCookie);
+
+        if (curHash != newHash) {
+            cookieStore.removeAll();
+            httpCookie.forEach(hc -> cookieStore.add(uri, hc));
+            updateCookieMetadata(newHash);
+            getLogger().info("Куки обновлены!");
+        } else {
+            validateCookieMetadata();
+        }
+
 
     }
 
+    private void updateCookieMetadata(final long newHttpCookieHash) {
+        keyValueRepo.set(HASH_COOKIE_KEY, String.valueOf(newHttpCookieHash));
+        keyValueRepo.set(STORE_ENCODE_COOKIE_KEY, cockeEncoder.getName());
+        keyValueRepo.set(STORE_PASSWORD_COOKIE_KEY, String.valueOf(HashUtils.getPasswordHash(cockeEncoder.getPassword())));
+    }
 
-    private void truncateTables() throws InitializationException {
-        try (Connection connection = getConnection();) {
-            UpdateDataBaseUtils.truncateTable(connection, "vk_cookie");
-        } catch (SQLException e) {
-            throw new InitializationException("Ошибка при очистке таблиц");
+    private void validateCookieMetadata() {
+        String storeName = keyValueRepo.get(STORE_ENCODE_COOKIE_KEY).orElse("");
+        Long storePassword = keyValueRepo.get(STORE_PASSWORD_COOKIE_KEY).map(Long::valueOf).orElse(0L);
+        long crc32Checksum = HashUtils.getPasswordHash(cockeEncoder.getPassword());
+
+        Assert.isTrue(cockeEncoder.getName().equals(storeName), "Изменен способ шифрования Storage Cookie!");
+        Assert.isTrue(crc32Checksum == storePassword, "Изменен пароль от Storage Cookie!");
+    }
+
+    private CookieEncoder getEncode(final VkClientServiceProperty property) {
+        switch (property.getCookieEncoderType()) {
+            case AES:
+                return new AesCookieEncoder(property.getEncodeKey());
+            case NO_ENCODER:
+            default:
+                return new NoCookieEncoder();
         }
     }
 
-    private Connection getConnection() throws InitializationException, SQLException {
-        Connection connection = connectionPool.getConnection();
-        connection.setSchema("cashback");
-        return connection;
-    }
 
     // =====================================================================================
     // Реализация интерфейса

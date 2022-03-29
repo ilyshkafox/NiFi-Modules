@@ -9,6 +9,7 @@ import org.apache.nifi.expression.ExpressionLanguageScope;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.nifi.reporting.InitializationException;
 import org.jooq.SQLDialect;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.cookieencoder.CookieEncoderType;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.dao.J2TeamCookies;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.utils.Assert;
 
@@ -41,8 +42,8 @@ public class VkClientServiceProperty {
             .name("database-dialect")
             .displayName("Sql Dialect")
             .description("Диалект БД.")
-            .allowableValues(SQLDialect.POSTGRES.getName())
-            .defaultValue(SQLDialect.POSTGRES.getName())
+            .allowableValues(SQLDialect.POSTGRES.name())
+            .defaultValue(SQLDialect.POSTGRES.name())
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .expressionLanguageSupported(ExpressionLanguageScope.NONE)
             .required(true)
@@ -61,6 +62,25 @@ public class VkClientServiceProperty {
             )
             .addValidator(J2TeamValidator.JSON_FORMAT_VALIDATOR)
             .expressionLanguageSupported(ExpressionLanguageScope.VARIABLE_REGISTRY)
+            .sensitive(true)
+            .build();
+
+
+    protected static final PropertyDescriptor COOKIE_ENCODER = new PropertyDescriptor.Builder()
+            .name("cookie-encoder")
+            .displayName("Шифрование cookie")
+            .description("Обеспечивает шифрование cookie")
+            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+            .allowableValues(CookieEncoderType.values())
+            .defaultValue(CookieEncoderType.NO_ENCODER.name())
+            .build();
+
+    protected static final PropertyDescriptor COOKIE_ENCODE_KEY = new PropertyDescriptor.Builder()
+            .name("cookie-encoder-key")
+            .displayName("Encode key")
+            .description("Обеспечивает шифрование cookie")
+            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+            .dependsOn(COOKIE_ENCODER, CookieEncoderType.AES.name())
             .sensitive(true)
             .build();
 
@@ -84,7 +104,7 @@ public class VkClientServiceProperty {
         return SQLDialect.valueOf(context.getProperty(DATABASE_DIALECT).evaluateAttributeExpressions().getValue());
     }
 
-    public J2TeamCookies getJ2teamCooke() throws InitializationException {
+    public J2TeamCookies loadVkJ2teamCooke() throws InitializationException {
         String value = context.getProperty(J2TEAM_COOKIE).evaluateAttributeExpressions().getValue();
         try {
             J2TeamCookies j2TeamCookies = objectMapper.readValue(value, J2TeamCookies.class);
@@ -94,5 +114,14 @@ public class VkClientServiceProperty {
         } catch (Exception e) {
             throw new InitializationException(e.getMessage(), e);
         }
+    }
+
+
+    public CookieEncoderType getCookieEncoderType() {
+        return CookieEncoderType.valueOf(context.getProperty(COOKIE_ENCODER).evaluateAttributeExpressions().getValue());
+    }
+
+    public String getEncodeKey() {
+        return context.getProperty(COOKIE_ENCODE_KEY).evaluateAttributeExpressions().getValue();
     }
 }

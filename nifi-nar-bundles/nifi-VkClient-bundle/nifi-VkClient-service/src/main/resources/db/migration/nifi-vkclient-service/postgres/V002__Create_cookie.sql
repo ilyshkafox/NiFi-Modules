@@ -8,7 +8,7 @@ CREATE TABLE cookie
     value       varchar               not null,
     comment     varchar,
     comment_url varchar,
-    discard     varchar,
+    discard     bool,
     max_age     timestamp(3) with time zone,
     portlist    varchar,
     secure      boolean,

@@ -1,5 +1,7 @@
 package ru.ilyshkafox.nifi.controllers.cashback.vk.utils;
 
+import org.flywaydb.core.internal.util.StringUtils;
+
 import java.net.HttpCookie;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -8,7 +10,7 @@ import java.util.List;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
-public abstract class HashHttpCookie {
+public abstract class HashUtils {
     public static long getCookieHash(List<HttpCookie> httpCookie) {
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES * httpCookie.size());
 
@@ -18,7 +20,7 @@ public abstract class HashHttpCookie {
                         .thenComparing(HttpCookie::getPath)
                         .thenComparing(HttpCookie::getValue)
                 )
-                .map(HashHttpCookie::getHashCode)
+                .map(HashUtils::getHashCode)
                 .forEach(buffer::putLong);
         return getCRC32Checksum(buffer.array());
     }
@@ -39,6 +41,10 @@ public abstract class HashHttpCookie {
         Checksum crc32 = new CRC32();
         crc32.update(bytes, 0, bytes.length);
         return crc32.getValue();
+    }
+
+    public static long getPasswordHash(String password) {
+        return StringUtils.hasText(password) ? getCRC32Checksum(password.getBytes(StandardCharsets.ISO_8859_1)) : 0;
     }
 
 }
