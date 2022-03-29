@@ -96,16 +96,16 @@ public class VkClientServiceProperty {
 
 
     public String getSchemaName() throws InitializationException {
-        return context.getProperty(SCHEMA_NAME).evaluateAttributeExpressions().getValue();
+        return context.getProperty(SCHEMA_NAME).getValue();
     }
 
 
     public SQLDialect getSqlDialect() throws InitializationException {
-        return SQLDialect.valueOf(context.getProperty(DATABASE_DIALECT).evaluateAttributeExpressions().getValue());
+        return SQLDialect.valueOf(context.getProperty(DATABASE_DIALECT).getValue());
     }
 
     public J2TeamCookies loadVkJ2teamCooke() throws InitializationException {
-        String value = context.getProperty(J2TEAM_COOKIE).evaluateAttributeExpressions().getValue();
+        String value = context.getProperty(J2TEAM_COOKIE).getValue();
         try {
             J2TeamCookies j2TeamCookies = objectMapper.readValue(value, J2TeamCookies.class);
             Assert.isTrue(J2TeamValidator.ALLOW_URL.contains(j2TeamCookies.getUrl()), "Необходимо куки от login VK. Получено: \"" + j2TeamCookies.getUrl() + "\", разрешено: " + J2TeamValidator.ALLOW_URL.stream().collect(Collectors.joining("\", \"", "[\"", "\"]")) + ".");
@@ -118,7 +118,7 @@ public class VkClientServiceProperty {
 
 
     public CookieEncoderType getCookieEncoderType() {
-        return CookieEncoderType.valueOf(context.getProperty(COOKIE_ENCODER).evaluateAttributeExpressions().getValue());
+        return CookieEncoderType.valueOf(context.getProperty(COOKIE_ENCODER).getValue());
     }
 
     public String getEncodeKey() {

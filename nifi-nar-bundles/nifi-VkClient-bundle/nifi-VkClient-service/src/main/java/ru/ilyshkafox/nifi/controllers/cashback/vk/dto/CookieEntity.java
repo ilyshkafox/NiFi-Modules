@@ -11,7 +11,7 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class CookieEntity {
     private Long id;
-    private String uri;
+    private String url;
     private String name;
     private String domain;
     private String path;

@@ -59,7 +59,7 @@ public class CookieRepo {
                         TABLE.HTTP_ONLY,
                         TABLE.VERSION
                 )
-                .values(entity.getUri(),
+                .values(entity.getUrl(),
                         entity.getName(),
                         entity.getDomain(),
                         entity.getPath(),
@@ -78,7 +78,7 @@ public class CookieRepo {
 
     private void update(CookieEntity entity) {
         dsl.update(TABLE)
-                .set(TABLE.URL, entity.getUri())
+                .set(TABLE.URL, entity.getUrl())
                 .set(TABLE.NAME, entity.getName())
                 .set(TABLE.DOMAIN, entity.getDomain())
                 .set(TABLE.PATH, entity.getPath())

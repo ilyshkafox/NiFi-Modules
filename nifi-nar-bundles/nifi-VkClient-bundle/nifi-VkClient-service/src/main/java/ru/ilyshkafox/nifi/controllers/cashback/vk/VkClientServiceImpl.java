@@ -68,9 +68,9 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
         var property = new VkClientServiceProperty(context);
 
         initDataSource(property);
-        initRepository(property);
+        initRepositoryStep1(property);
         migration(property);
-        checkAndUpdateCooke(property);
+        initRepositoryStep2CookieStore(property);
 
     }
 
@@ -91,12 +91,12 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
         dsl.setSchema(property.getSchemaName()).execute();
     }
 
-    private void initRepository(final VkClientServiceProperty property) throws InitializationException {
+    private void initRepositoryStep1(final VkClientServiceProperty property) throws InitializationException {
         keyValueRepo = new KeyValueRepo(dsl);
         cookieRepo = new CookieRepo(dsl);
         cockeEncoder = getEncode(property);
-        cookieStore = new VkCookieStore(cookieRepo, cockeEncoder);
     }
+
 
     private void migration(final VkClientServiceProperty property) throws InitializationException {
         String schemaName = property.getSchemaName();
@@ -107,22 +107,23 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
         }
     }
 
-    private void checkAndUpdateCooke(final VkClientServiceProperty property) throws InitializationException {
+    private void initRepositoryStep2CookieStore(final VkClientServiceProperty property) throws InitializationException {
         J2TeamCookies j2TeamCookies = property.loadVkJ2teamCooke();
         URI uri = URI.create(j2TeamCookies.getUrl());
         List<HttpCookie> httpCookie = J2TeamCookiesMapper.map(j2TeamCookies);
-
 
         long curHash = keyValueRepo.get(HASH_COOKIE_KEY).map(Long::parseLong).orElse(-1L);
         long newHash = HashUtils.getCookieHash(httpCookie);
 
         if (curHash != newHash) {
-            cookieStore.removeAll();
+            cookieRepo.deleteAll();
+            cookieStore = new VkCookieStore(cookieRepo, cockeEncoder, getLogger());
             httpCookie.forEach(hc -> cookieStore.add(uri, hc));
             updateCookieMetadata(newHash);
             getLogger().info("Куки обновлены!");
         } else {
             validateCookieMetadata();
+            cookieStore = new VkCookieStore(cookieRepo, cockeEncoder, getLogger());
         }
 
 

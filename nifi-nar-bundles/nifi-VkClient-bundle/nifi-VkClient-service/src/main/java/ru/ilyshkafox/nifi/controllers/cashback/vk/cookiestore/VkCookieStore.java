@@ -1,6 +1,6 @@
 package ru.ilyshkafox.nifi.controllers.cashback.vk.cookiestore;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apache.nifi.logging.ComponentLog;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.CookieEncoder;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.dto.CookieEntity;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.repo.CookieRepo;
@@ -9,28 +9,29 @@ import java.net.*;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-@Slf4j
 public class VkCookieStore implements CookieStore {
     private final CookieStore cookieStore = new CookieManager().getCookieStore();
     private final CookieRepo repo;
     private final CookieEncoder encoder;
+    private final ComponentLog log;
 
-    public VkCookieStore(CookieRepo repo, CookieEncoder encoder) {
+    public VkCookieStore(CookieRepo repo, CookieEncoder encoder, ComponentLog logger) {
         this.repo = repo;
         this.encoder = encoder;
+        this.log = logger;
         init();
     }
 
     private void init() {
         List<CookieEntity> all = repo.findAll();
         all.forEach(vkCookieEntity -> {
-            URI uri = URI.create(vkCookieEntity.getUri());
+            URI uri = URI.create(vkCookieEntity.getUrl());
             HttpCookie cookie = map(vkCookieEntity);
             if (cookie != null) {
                 cookieStore.add(uri, cookie);
             }
         });
-        log.info("Проинициализировано {} записей Cookie", getCookies().size());
+        log.info("Cookie: Проинициализировано {} записей", getCookies().size());
     }
 
     @Override
@@ -39,6 +40,7 @@ public class VkCookieStore implements CookieStore {
         repo.delete(cookie.getName(), cookie.getDomain(), cookie.getPath());
         if (cookie.getMaxAge() > 0) {
             repo.save(map(cookie, getEffectiveURI(uri)));
+            log.debug("Cookie: Добавлено значение {}", cookie.getName());
         }
     }
 
@@ -46,6 +48,7 @@ public class VkCookieStore implements CookieStore {
     public boolean remove(URI uri, HttpCookie cookie) {
         boolean res = cookieStore.remove(uri, cookie);
         repo.delete(cookie.getName(), cookie.getDomain(), cookie.getPath());
+        log.debug("Cookie: Удалено значение {}", cookie.getName());
         return res;
     }
 
@@ -53,6 +56,7 @@ public class VkCookieStore implements CookieStore {
     public boolean removeAll() {
         boolean res = cookieStore.removeAll();
         repo.deleteAll();
+        log.debug("Cookie: Удалены все занчения");
         return res;
     }
 
@@ -76,7 +80,7 @@ public class VkCookieStore implements CookieStore {
 
         CookieEntity dto = new CookieEntity();
         if (uri != null) {
-            dto.setUri(uri.toString());
+            dto.setUrl(uri.toString());
         }
         dto.setName(cookie.getName());
         dto.setDomain(cookie.getDomain());
