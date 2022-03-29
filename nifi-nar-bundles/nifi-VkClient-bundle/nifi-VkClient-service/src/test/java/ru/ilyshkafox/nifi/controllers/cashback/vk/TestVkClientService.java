@@ -11,10 +11,7 @@ import org.jooq.SQLDialect;
 import org.jooq.generated.Tables;
 import org.jooq.generated.tables.Cookie;
 import org.jooq.impl.DSL;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -33,6 +30,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 class TestVkClientService {
@@ -316,6 +314,68 @@ class TestVkClientService {
         assertEquals(cookieEntities.get(19).getName(), "remixua");
         assertEquals(cookieEntities.get(20).getName(), "s");
 
+    }
+
+
+    @Test
+    public void testUpdateEncoder() throws InitializationException, IOException, SQLException {
+
+        InputStream is = getClass().getClassLoader().getResourceAsStream("test.json");
+        String jsonData = IOUtils.toString(is, StandardCharsets.UTF_8);
+        jsonData = jsonData.replaceAll("<expirationDate>", String.valueOf((System.currentTimeMillis() / 1000L) + 1000));
+
+        // Подготовка
+        runner.addControllerService(dbcpService.getIdentifier(), dbcpService);
+        runner.addControllerService("vk-client-service", vkClientService);
+
+        runner.setProperty(vkClientService, VkClientServiceProperty.CONNECTION_POOL, dbcpService.getIdentifier());
+        runner.setProperty(vkClientService, VkClientServiceProperty.SCHEMA_NAME, "vk");
+        runner.setProperty(vkClientService, VkClientServiceProperty.DATABASE_DIALECT, SQLDialect.POSTGRES.name());
+        runner.setProperty(vkClientService, VkClientServiceProperty.J2TEAM_COOKIE, jsonData);
+        runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODER, CookieEncoderType.NO_ENCODER.name());
+
+        // Проверка
+        runner.assertValid(vkClientService);
+        // Step 1 Запустить
+        runner.enableControllerService(dbcpService);
+        runner.enableControllerService(vkClientService);
+        // Step 2 Остановить
+        runner.disableControllerService(vkClientService);
+        // Step 3 Обновить
+        runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODER, CookieEncoderType.AES.name());
+        runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODE_KEY, "123");
+        // Step 4 Запустить
+        assertThrows(org.opentest4j.AssertionFailedError.class, () -> runner.enableControllerService(vkClientService));
+    }
+
+    @Test
+    public void testUpdatePass() throws InitializationException, IOException, SQLException {
+
+        InputStream is = getClass().getClassLoader().getResourceAsStream("test.json");
+        String jsonData = IOUtils.toString(is, StandardCharsets.UTF_8);
+        jsonData = jsonData.replaceAll("<expirationDate>", String.valueOf((System.currentTimeMillis() / 1000L) + 1000));
+
+        // Подготовка
+        runner.addControllerService(dbcpService.getIdentifier(), dbcpService);
+        runner.addControllerService("vk-client-service", vkClientService);
+
+        runner.setProperty(vkClientService, VkClientServiceProperty.CONNECTION_POOL, dbcpService.getIdentifier());
+        runner.setProperty(vkClientService, VkClientServiceProperty.SCHEMA_NAME, "vk");
+        runner.setProperty(vkClientService, VkClientServiceProperty.DATABASE_DIALECT, SQLDialect.POSTGRES.name());
+        runner.setProperty(vkClientService, VkClientServiceProperty.J2TEAM_COOKIE, jsonData);
+        runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODER, CookieEncoderType.AES.name());
+        runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODE_KEY, "123");
+        // Проверка
+        runner.assertValid(vkClientService);
+        // Step 1 Запустить
+        runner.enableControllerService(dbcpService);
+        runner.enableControllerService(vkClientService);
+        // Step 2 Остановить
+        runner.disableControllerService(vkClientService);
+        // Step 3 Обновить
+        runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODE_KEY, "123Update");
+        // Step 4 Запустить
+        assertThrows(org.opentest4j.AssertionFailedError.class, () -> runner.enableControllerService(vkClientService));
     }
 
 
