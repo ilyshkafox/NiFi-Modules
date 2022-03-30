@@ -17,8 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.lifecycle.Startables;
-import ru.ilyshkafox.nifi.controllers.cashback.vk.cookieencoder.CookieEncoderType;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.dto.CookieEntity;
 
 import java.io.IOException;
@@ -27,7 +25,6 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -59,16 +56,16 @@ class TestVkClientService {
         if (postgreSQLContainer != null) {
             postgreSQLContainer.close();
         }
-        postgreSQLContainer = new PostgreSQLContainer("postgres:13.3")
-                .withDatabaseName("public-test")
+        postgreSQLContainer = new PostgreSQLContainer("postgres:latest")
+                .withDatabaseName("postgres")
                 .withUsername("sa")
                 .withPassword("sa");
-        Startables.deepStart(Stream.of(postgreSQLContainer)).join();
+        postgreSQLContainer.start();
     }
 
 
     @AfterEach
-    public void initAll() throws InterruptedException {
+    public void clearAll() throws InterruptedException {
         if (postgreSQLContainer != null) {
             postgreSQLContainer.close();
         }
@@ -376,6 +373,45 @@ class TestVkClientService {
         runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODE_KEY, "123Update");
         // Step 4 Запустить
         assertThrows(org.opentest4j.AssertionFailedError.class, () -> runner.enableControllerService(vkClientService));
+    }
+
+
+    @Test
+    public void testUpdateJson() throws InitializationException, IOException, SQLException {
+
+        InputStream is = getClass().getClassLoader().getResourceAsStream("test.json");
+        InputStream is2 = getClass().getClassLoader().getResourceAsStream("test2.json");
+
+        String jsonData = IOUtils.toString(is, StandardCharsets.UTF_8);
+        String jsonData2 = IOUtils.toString(is2, StandardCharsets.UTF_8);
+
+
+        jsonData = jsonData.replaceAll("<expirationDate>", String.valueOf((System.currentTimeMillis() / 1000L) + 1000));
+        jsonData2 = jsonData2.replaceAll("<expirationDate>", String.valueOf((System.currentTimeMillis() / 1000L) + 1000));
+
+
+        // Подготовка
+        runner.addControllerService(dbcpService.getIdentifier(), dbcpService);
+        runner.addControllerService("vk-client-service", vkClientService);
+
+        runner.setProperty(vkClientService, VkClientServiceProperty.CONNECTION_POOL, dbcpService.getIdentifier());
+        runner.setProperty(vkClientService, VkClientServiceProperty.SCHEMA_NAME, "vk");
+        runner.setProperty(vkClientService, VkClientServiceProperty.DATABASE_DIALECT, SQLDialect.POSTGRES.name());
+        runner.setProperty(vkClientService, VkClientServiceProperty.J2TEAM_COOKIE, jsonData);
+        runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODER, CookieEncoderType.NO_ENCODER.name());
+        // Проверка
+        runner.assertValid(vkClientService);
+        // Step 1 Запустить
+        runner.enableControllerService(dbcpService);
+        runner.enableControllerService(vkClientService);
+        // Step 2 Остановить
+        runner.disableControllerService(vkClientService);
+        // Step 3 Обновить
+        runner.setProperty(vkClientService, VkClientServiceProperty.J2TEAM_COOKIE, jsonData2);
+        runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODER, CookieEncoderType.AES.name());
+        runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODE_KEY, "123");
+        // Step 4 Запустить
+        runner.enableControllerService(vkClientService);
     }
 
 

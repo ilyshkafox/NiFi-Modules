@@ -16,22 +16,26 @@ import org.apache.nifi.reporting.InitializationException;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.cookieencoder.AesCookieEncoder;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.cookieencoder.CookieEncoder;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.cookieencoder.NoCookieEncoder;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.cookiestore.VkCookieStore;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.dao.J2TeamCookies;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.repo.CookieRepo;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.repo.KeyValueRepo;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.services.CheckBackClient;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.services.VkWebService;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.utils.Assert;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.utils.HashUtils;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.utils.J2TeamCookiesMapper;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.utils.UpdateDataBaseUtils;
 
 import javax.sql.DataSource;
-import java.io.IOException;
+import java.net.CookieManager;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URI;
 import java.sql.SQLException;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import static ru.ilyshkafox.nifi.controllers.cashback.vk.VkClientServiceProperty.*;
@@ -47,6 +51,8 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
     private CookieEncoder cockeEncoder;
     private CookieRepo cookieRepo;
     private CookieStore cookieStore;
+    private VkWebService webBrowser;
+    private CookieManager cookieManager;
 
 
     @Getter
@@ -61,7 +67,7 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
 
 
     @OnEnabled
-    public void onMigration(final ConfigurationContext context) throws InitializationException, IOException, SQLException {
+    public void onMigration(final ConfigurationContext context) throws InitializationException {
         var log = getLogger();
         log.info("Запуск VkClient сервиса.");
 
@@ -71,7 +77,16 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
         initRepositoryStep1(property);
         migration(property);
         initRepositoryStep2CookieStore(property);
+        initWebBrowser(property);
 
+    }
+
+    @OnEnabled
+    public void onLogin(final ConfigurationContext context) throws InitializationException {
+        if (!webBrowser.checkLogin()) {
+            throw new InitializationException("Пользователь VK не авторизирован!");
+        }
+        getLogger().info("Авторизация VK произошла успешно!");
     }
 
     @OnDisabled
@@ -82,6 +97,9 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
         connectionPool = null;
         cockeEncoder = null;
         dsl = null;
+        cookieStore = null;
+        webBrowser = null;
+        cookieManager = null;
     }
 
     private void initDataSource(final VkClientServiceProperty property) throws InitializationException {
@@ -125,8 +143,12 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
             validateCookieMetadata();
             cookieStore = new VkCookieStore(cookieRepo, cockeEncoder, getLogger());
         }
+        cookieManager = new CookieManager(cookieStore, null);
 
+    }
 
+    private void initWebBrowser(final VkClientServiceProperty property) throws InitializationException {
+        webBrowser = new VkWebService(getLogger(), property.getHeaders(), cookieManager);
     }
 
     private void updateCookieMetadata(final long newHttpCookieHash) {
@@ -159,11 +181,19 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
     // Реализация интерфейса
     // =====================================================================================
 
+    private CheckBackClient checkBackClient;
 
-    @Override
-    public boolean isLogin() {
-        return false;
+    public CheckBackClient getCheckBackClient() {
+        if (checkBackClient == null // Нет текущего соединения
+                || checkBackClient.getLastRequestTime().plusSeconds(60).isAfter(OffsetDateTime.now()) // Простой соединения час
+        ) {
+            createCheckBackClient();
+        }
+        return checkBackClient;
     }
 
-
+    private void createCheckBackClient() {
+        String checkBackXAuth = webBrowser.getCheckBackXAuth();
+        checkBackClient = new CheckBackClient(checkBackXAuth, webBrowser);
+    }
 }

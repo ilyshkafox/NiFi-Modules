@@ -1,7 +1,5 @@
 package ru.ilyshkafox.nifi.controllers.cashback.vk.cookieencoder;
 
-import ru.ilyshkafox.nifi.controllers.cashback.vk.CookieEncoder;
-
 
 public class NoCookieEncoder implements CookieEncoder {
     @Override

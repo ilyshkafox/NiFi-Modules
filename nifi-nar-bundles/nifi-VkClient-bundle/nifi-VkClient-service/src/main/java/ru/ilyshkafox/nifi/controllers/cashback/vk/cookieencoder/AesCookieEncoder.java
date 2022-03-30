@@ -2,7 +2,6 @@ package ru.ilyshkafox.nifi.controllers.cashback.vk.cookieencoder;
 
 import lombok.*;
 import org.apache.commons.codec.digest.DigestUtils;
-import ru.ilyshkafox.nifi.controllers.cashback.vk.CookieEncoder;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.utils.Assert;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.utils.Base64Utils;
 

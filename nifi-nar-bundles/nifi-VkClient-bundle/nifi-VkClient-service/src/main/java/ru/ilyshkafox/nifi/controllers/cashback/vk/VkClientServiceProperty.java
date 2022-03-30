@@ -9,10 +9,12 @@ import org.apache.nifi.expression.ExpressionLanguageScope;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.nifi.reporting.InitializationException;
 import org.jooq.SQLDialect;
-import ru.ilyshkafox.nifi.controllers.cashback.vk.cookieencoder.CookieEncoderType;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.dao.J2TeamCookies;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.dto.Headers;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.dto.HeadersType;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.utils.Assert;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -123,5 +125,71 @@ public class VkClientServiceProperty {
 
     public String getEncodeKey() {
         return context.getProperty(COOKIE_ENCODE_KEY).evaluateAttributeExpressions().getValue();
+    }
+
+    public Map<HeadersType, Headers> getHeaders() {
+
+        Headers vkLogin = Headers.builder()
+                .accept("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
+                .acceptLanguage("en-GB,en;q=0.9,en-US;q=0.8,ru;q=0.7")
+                .cacheControl("max-age=0")
+                .referer("https://m.vk.com/")
+                .secChUa("\\\" Not;A Brand\\\";v=\\\"99\\\", \\\"Microsoft Edge\\\";v=\\\"91\\\", \\\"Chromium\\\";v=\\\"91\\\"")
+                .secChUaMobile("?0")
+                .secFetchDest("document")
+                .secFetchMode("navigate")
+                .secFetchSite("none")
+                .upgradeInsecureRequests("?1")
+                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36 Edg/91.0.864.59")
+                .build();
+
+
+        Headers checkbackLogin = Headers.builder()
+                .accept("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
+                .acceptLanguage("en-GB,en;q=0.9,en-US;q=0.8")
+                .cacheControl("max-age=0")
+                .referer("https://m.vk.com/services")
+                .secChUa("\\\" Not;A Brand\\\";v=\\\"99\\\", \\\"Microsoft Edge\\\";v=\\\"91\\\", \\\"Chromium\\\";v=\\\"91\\\"")
+                .secChUaMobile("?0")
+                .secFetchDest("empty")
+                .secFetchMode("same-origin")
+                .secFetchSite("same-origin")
+                .upgradeInsecureRequests("1")
+                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36 Edg/91.0.864.59")
+                .build();
+
+        Headers checkbackIndex = Headers.builder()
+                .accept("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
+                .acceptLanguage("en-GB,en;q=0.9,en-US;q=0.8,ru;q=0.7")
+                .cacheControl("max-age=0")
+                .referer("https://m.vk.com/")
+                .secChUa("\\\" Not;A Brand\\\";v=\\\"99\\\", \\\"Microsoft Edge\\\";v=\\\"91\\\", \\\"Chromium\\\";v=\\\"91\\\"")
+                .secChUaMobile("?0")
+                .secFetchDest("iframe")
+                .secFetchMode("navigate")
+                .secFetchSite("cross-site")
+                .upgradeInsecureRequests("1")
+                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36 Edg/91.0.864.59")
+                .build();
+
+        Headers checkbackRestHeader = Headers.builder()
+                .accept("*/*")
+                .acceptLanguage("en-GB,en;q=0.9,en-US;q=0.8,ru;q=0.7")
+                .cacheControl("max-age=0")
+                .secChUa("\\\" Not;A Brand\\\";v=\\\"99\\\", \\\"Microsoft Edge\\\";v=\\\"91\\\", \\\"Chromium\\\";v=\\\"91\\\"")
+                .secChUaMobile("?0")
+                .secFetchDest("empty")
+                .secFetchMode("cors")
+                .secFetchSite("same-origin")
+                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36 Edg/91.0.864.59")
+                .build();
+
+        return Map.of(
+                HeadersType.VK_LOGIN, vkLogin,
+                HeadersType.CHECKBACK_LOGIN, checkbackLogin,
+                HeadersType.CHECKBACK_INDEX, checkbackIndex,
+                HeadersType.CHECKBACK_REST_HEADER, checkbackRestHeader
+        );
+
     }
 }

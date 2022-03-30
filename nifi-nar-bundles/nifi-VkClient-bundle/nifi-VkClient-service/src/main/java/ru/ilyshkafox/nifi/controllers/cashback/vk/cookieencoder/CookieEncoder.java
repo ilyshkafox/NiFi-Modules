@@ -1,4 +1,4 @@
-package ru.ilyshkafox.nifi.controllers.cashback.vk;
+package ru.ilyshkafox.nifi.controllers.cashback.vk.cookieencoder;
 
 public interface CookieEncoder {
     default String getName() {

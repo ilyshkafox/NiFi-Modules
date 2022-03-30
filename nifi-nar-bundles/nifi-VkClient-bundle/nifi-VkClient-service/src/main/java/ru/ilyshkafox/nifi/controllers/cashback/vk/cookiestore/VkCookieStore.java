@@ -1,7 +1,7 @@
 package ru.ilyshkafox.nifi.controllers.cashback.vk.cookiestore;
 
 import org.apache.nifi.logging.ComponentLog;
-import ru.ilyshkafox.nifi.controllers.cashback.vk.CookieEncoder;
+import ru.ilyshkafox.nifi.controllers.cashback.vk.cookieencoder.CookieEncoder;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.dto.CookieEntity;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.repo.CookieRepo;
 
