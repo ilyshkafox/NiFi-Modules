@@ -9,9 +9,13 @@ import org.apache.nifi.annotation.documentation.Tags;
 import org.apache.nifi.annotation.lifecycle.OnDisabled;
 import org.apache.nifi.annotation.lifecycle.OnEnabled;
 import org.apache.nifi.components.PropertyDescriptor;
+import org.apache.nifi.components.ValidationContext;
+import org.apache.nifi.components.ValidationResult;
 import org.apache.nifi.controller.AbstractControllerService;
 import org.apache.nifi.controller.ConfigurationContext;
 import org.apache.nifi.dbcp.DBCPService;
+import org.apache.nifi.expression.ExpressionLanguageScope;
+import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.nifi.reporting.InitializationException;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
@@ -36,7 +40,10 @@ import java.net.HttpCookie;
 import java.net.URI;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static ru.ilyshkafox.nifi.controllers.cashback.vk.VkClientServiceProperty.*;
 
@@ -44,6 +51,7 @@ import static ru.ilyshkafox.nifi.controllers.cashback.vk.VkClientServiceProperty
 @Tags({"ilyshkafox", "client", "vk", "cashback"})
 @CapabilityDescription("Клиент подключения к VK.")
 public class VkClientServiceImpl extends AbstractControllerService implements VkClientService {
+    private final static String DISABLE_VALIDATE_LOGIN_PROPERTY = "disableValidateLoginInStart";
     private final static String HASH_COOKIE_KEY = "vk.cookie.hash";
     private final static String STORE_ENCODE_COOKIE_KEY = "vk.cookie.encoder.class";
     private final static String STORE_PASSWORD_COOKIE_KEY = "vk.cookie.password.hash";
@@ -83,10 +91,17 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
 
     @OnEnabled
     public void onLogin(final ConfigurationContext context) throws InitializationException {
+        boolean disableValidateLogin = Boolean.parseBoolean(context.getAllProperties().getOrDefault(DISABLE_VALIDATE_LOGIN_PROPERTY, "false"));
+        if (disableValidateLogin) {
+            getLogger().warn("Валидация авторизации отключена! ");
+            return;
+        }
+
         if (!webBrowser.checkLogin()) {
             throw new InitializationException("Пользователь VK не авторизирован!");
         }
         getLogger().info("Авторизация VK произошла успешно!");
+
     }
 
     @OnDisabled
@@ -101,6 +116,21 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
         webBrowser = null;
         cookieManager = null;
     }
+
+    @Override
+    protected PropertyDescriptor getSupportedDynamicPropertyDescriptor(final String propertyDescriptorName) {
+        if(DISABLE_VALIDATE_LOGIN_PROPERTY.equals(propertyDescriptorName)){
+            return new PropertyDescriptor.Builder()
+                    .name(propertyDescriptorName)
+                    .required(false)
+                    .addValidator(StandardValidators.BOOLEAN_VALIDATOR)
+                    .dynamic(true)
+                    .expressionLanguageSupported(ExpressionLanguageScope.VARIABLE_REGISTRY)
+                    .build();
+        }
+        return null;
+    }
+
 
     private void initDataSource(final VkClientServiceProperty property) throws InitializationException {
         connectionPool = property.crateConnectionPool();

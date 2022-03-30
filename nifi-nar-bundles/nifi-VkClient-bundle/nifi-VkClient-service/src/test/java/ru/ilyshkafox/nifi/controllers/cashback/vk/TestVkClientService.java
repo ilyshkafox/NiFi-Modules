@@ -86,6 +86,7 @@ class TestVkClientService {
         runner.setProperty(vkClientService, VkClientServiceProperty.CONNECTION_POOL, dbcpService.getIdentifier());
         runner.setProperty(vkClientService, VkClientServiceProperty.SCHEMA_NAME, "vk");
         runner.setProperty(vkClientService, VkClientServiceProperty.DATABASE_DIALECT, SQLDialect.POSTGRES.name());
+        runner.setProperty(vkClientService, "disableValidateLoginInStart", "true");
         runner.setProperty(vkClientService, VkClientServiceProperty.J2TEAM_COOKIE, jsonData);
         runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODER, CookieEncoderType.NO_ENCODER.name());
 
@@ -144,6 +145,7 @@ class TestVkClientService {
         runner.setProperty(vkClientService, VkClientServiceProperty.SCHEMA_NAME, "vk");
         runner.setProperty(vkClientService, VkClientServiceProperty.DATABASE_DIALECT, SQLDialect.POSTGRES.name());
         runner.setProperty(vkClientService, VkClientServiceProperty.J2TEAM_COOKIE, jsonData);
+        runner.setProperty(vkClientService, "disableValidateLoginInStart", "true");
         runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODER, CookieEncoderType.NO_ENCODER.name());
 
         // Проверка
@@ -207,6 +209,7 @@ class TestVkClientService {
         runner.setProperty(vkClientService, VkClientServiceProperty.SCHEMA_NAME, "vk");
         runner.setProperty(vkClientService, VkClientServiceProperty.DATABASE_DIALECT, SQLDialect.POSTGRES.name());
         runner.setProperty(vkClientService, VkClientServiceProperty.J2TEAM_COOKIE, jsonData);
+        runner.setProperty(vkClientService, "disableValidateLoginInStart", "true");
         runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODER, CookieEncoderType.AES.name());
         runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODE_KEY, "123");
 
@@ -264,6 +267,7 @@ class TestVkClientService {
         runner.setProperty(vkClientService, VkClientServiceProperty.SCHEMA_NAME, "vk");
         runner.setProperty(vkClientService, VkClientServiceProperty.DATABASE_DIALECT, SQLDialect.POSTGRES.name());
         runner.setProperty(vkClientService, VkClientServiceProperty.J2TEAM_COOKIE, jsonData);
+        runner.setProperty(vkClientService, "disableValidateLoginInStart", "true");
         runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODER, CookieEncoderType.AES.name());
         runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODE_KEY, "123");
 
@@ -329,6 +333,7 @@ class TestVkClientService {
         runner.setProperty(vkClientService, VkClientServiceProperty.SCHEMA_NAME, "vk");
         runner.setProperty(vkClientService, VkClientServiceProperty.DATABASE_DIALECT, SQLDialect.POSTGRES.name());
         runner.setProperty(vkClientService, VkClientServiceProperty.J2TEAM_COOKIE, jsonData);
+        runner.setProperty(vkClientService, "disableValidateLoginInStart", "true");
         runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODER, CookieEncoderType.NO_ENCODER.name());
 
         // Проверка
@@ -360,6 +365,7 @@ class TestVkClientService {
         runner.setProperty(vkClientService, VkClientServiceProperty.SCHEMA_NAME, "vk");
         runner.setProperty(vkClientService, VkClientServiceProperty.DATABASE_DIALECT, SQLDialect.POSTGRES.name());
         runner.setProperty(vkClientService, VkClientServiceProperty.J2TEAM_COOKIE, jsonData);
+        runner.setProperty(vkClientService, "disableValidateLoginInStart", "true");
         runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODER, CookieEncoderType.AES.name());
         runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODE_KEY, "123");
         // Проверка
@@ -398,6 +404,7 @@ class TestVkClientService {
         runner.setProperty(vkClientService, VkClientServiceProperty.SCHEMA_NAME, "vk");
         runner.setProperty(vkClientService, VkClientServiceProperty.DATABASE_DIALECT, SQLDialect.POSTGRES.name());
         runner.setProperty(vkClientService, VkClientServiceProperty.J2TEAM_COOKIE, jsonData);
+        runner.setProperty(vkClientService, "disableValidateLoginInStart", "true");
         runner.setProperty(vkClientService, VkClientServiceProperty.COOKIE_ENCODER, CookieEncoderType.NO_ENCODER.name());
         // Проверка
         runner.assertValid(vkClientService);

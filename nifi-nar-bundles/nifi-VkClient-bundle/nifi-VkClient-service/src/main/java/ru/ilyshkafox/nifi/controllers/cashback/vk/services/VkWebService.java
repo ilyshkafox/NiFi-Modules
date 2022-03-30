@@ -1,8 +1,7 @@
 package ru.ilyshkafox.nifi.controllers.cashback.vk.services;
 
+import com.jayway.jsonpath.JsonPath;
 import org.apache.nifi.logging.ComponentLog;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.dto.Headers;
 import ru.ilyshkafox.nifi.controllers.cashback.vk.dto.HeadersType;
@@ -21,7 +20,6 @@ public class VkWebService {
     private final static String VK_LOGIN_URL = "https://login.vk.com/";
     private final static String VK_PATCH_FEED = "/feed";
     private final static String VK_CHECKBACK_CATALOG_URL = VK_URL + "/checkback?ref=catalog_recent";
-    private final static String CHECKBACK_INDEX_URL = VK_URL + "https://static.checkback.vkforms.ru/vkapps/index.html";
     private final HttpClient httpClient;
     private final Map<HeadersType, Headers> headersMap;
     private final ComponentLog log;
@@ -86,7 +84,7 @@ public class VkWebService {
         }
     }
 
-    private String getCheckBackXAuth0() throws IOException, InterruptedException, JSONException {
+    private String getCheckBackXAuth0() throws IOException, InterruptedException {
         Headers headers = headersMap.get(HeadersType.CHECKBACK_LOGIN);
         HttpRequest request = HttpRequest.newBuilder(URI.create(VK_CHECKBACK_CATALOG_URL)).GET()
                 .header("accept", headers.getAccept())
@@ -105,8 +103,9 @@ public class VkWebService {
         HttpResponse<String> htmlPage = httpClient.send(request, responseInfo -> HttpResponse.BodySubscribers.ofString(StandardCharsets.UTF_8));
         String jsonString = Jsoup.parse(htmlPage.body()).body().getElementById("page_script").html().split("\n")[2].split("=", 2)[1].trim();
         jsonString = jsonString.substring(0, jsonString.length() - 1);
-        JSONObject jsonObject = new JSONObject(jsonString);
-        return "?" + jsonObject.getString("vk_app_url").split("\\?", 2)[1].trim();
+
+        String result = JsonPath.read(jsonString, "$.vk_app_url").toString().split("\\?", 2)[1].trim();
+        return "?" + result;
     }
 
 
