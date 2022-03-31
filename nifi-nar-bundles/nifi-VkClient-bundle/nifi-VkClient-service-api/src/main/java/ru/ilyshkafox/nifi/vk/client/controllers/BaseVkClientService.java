@@ -6,6 +6,6 @@ import org.apache.nifi.controller.ControllerService;
 
 @Tags({"client", "service", "vk", "cashback"})
 @CapabilityDescription("Provides a basic connector to Accumulo services")
-public interface VkClient extends ControllerService {
+public interface BaseVkClientService extends ControllerService {
     CheckBackClient getCheckBackClient();
 }

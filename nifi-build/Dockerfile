@@ -28,8 +28,8 @@ RUN groupadd -g ${GID} nifi || groupmod -n nifi `getent group ${GID} | cut -d: -
 
 COPY --chown=nifi:nifi --from=original $NIFI_BASE_DIR $NIFI_BASE_DIR
 COPY --chown=nifi:nifi  drivers $NIFI_HOME/drivers
-COPY --chown=nifi:nifi  target/lib/*.nar $NIFI_HOME/lib/
 COPY --chown=nifi:nifi  jolt $NIFI_HOME/jolt
+COPY --chown=nifi:nifi  target/lib/*.nar $NIFI_HOME/lib/
 
 VOLUME ${NIFI_LOG_DIR} \
        ${NIFI_HOME}/conf \

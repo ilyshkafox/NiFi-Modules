@@ -43,7 +43,7 @@ import java.util.List;
 @RequiresInstanceClassLoading
 @Tags({"ilyshkafox", "client", "vk", "cashback"})
 @CapabilityDescription("Клиент подключения к VK.")
-public class VkClientServiceImpl extends AbstractControllerService implements VkClient {
+public class VkClientService extends AbstractControllerService implements BaseVkClientService {
     private final static String DISABLE_VALIDATE_LOGIN_PROPERTY = "disableValidateLoginInStart";
     private final static String HASH_COOKIE_KEY = "vk.cookie.hash";
     private final static String STORE_ENCODE_COOKIE_KEY = "vk.cookie.encoder.class";
@@ -80,9 +80,10 @@ public class VkClientServiceImpl extends AbstractControllerService implements Vk
         initRepositoryStep2CookieStore(property);
         initWebBrowser(property);
 
+        onLogin(context);
     }
 
-    @OnEnabled
+
     public void onLogin(final ConfigurationContext context) throws InitializationException {
         boolean disableValidateLogin = Boolean.parseBoolean(context.getAllProperties().getOrDefault(DISABLE_VALIDATE_LOGIN_PROPERTY, "false"));
         if (disableValidateLogin) {

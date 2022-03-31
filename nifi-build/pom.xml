@@ -74,18 +74,6 @@
     <dependencies>
         <dependency>
             <groupId>ru.ilyshkafox.nifi</groupId>
-            <artifactId>nifi-VkClient-service-api-nar</artifactId>
-            <version>${project.version}</version>
-            <type>nar</type>
-        </dependency>
-        <dependency>
-            <groupId>ru.ilyshkafox.nifi</groupId>
-            <artifactId>nifi-VkClient-service-nar</artifactId>
-            <version>${project.version}</version>
-            <type>nar</type>
-        </dependency>
-        <dependency>
-            <groupId>ru.ilyshkafox.nifi</groupId>
             <artifactId>nifi-MyReceiptModules-nar</artifactId>
             <version>${project.version}</version>
             <type>nar</type>

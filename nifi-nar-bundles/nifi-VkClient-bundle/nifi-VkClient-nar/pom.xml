@@ -25,13 +25,12 @@
         <dependency>
             <groupId>ru.ilyshkafox.nifi</groupId>
             <artifactId>nifi-VkClient-processor</artifactId>
-            <version>0.1</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>ru.ilyshkafox.nifi</groupId>
             <artifactId>nifi-VkClient-service-api-nar</artifactId>
             <version>${project.version}</version>
-            <type>nar</type>
         </dependency>
     </dependencies>
 

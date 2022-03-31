@@ -13,6 +13,8 @@ services:
     ports:
       - "8080:8080"
       - "8085:8085"
+    volumes:
+      - ./conf:/opt/nifi/nifi-current/conf
     environment:
       NIFI_WEB_HTTP_PORT: 8080
       NIFI_SENSITIVE_PROPS_KEY: ${SECRET_KEY}

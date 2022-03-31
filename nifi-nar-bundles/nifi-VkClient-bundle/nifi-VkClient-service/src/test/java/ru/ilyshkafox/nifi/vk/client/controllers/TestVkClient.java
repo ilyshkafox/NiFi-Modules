@@ -17,6 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.TestcontainersConfiguration;
 import ru.ilyshkafox.nifi.vk.client.controllers.dto.CookieEntity;
 
 import java.io.IOException;
@@ -41,7 +43,7 @@ class TestVkClient {
     private Processor dummyProcessor;
     @Mock
     private DBCPService dbcpService;
-    private VkClient vkClientService;
+    private BaseVkClientService vkClientService;
 
     @BeforeEach
     public void init() throws InterruptedException {
@@ -49,7 +51,7 @@ class TestVkClient {
         runner = TestRunners.newTestRunner(dummyProcessor);
         runner.setValidateExpressionUsage(false);
 
-        vkClientService = new VkClientServiceImpl();
+        vkClientService = new VkClientService();
         when(dbcpService.getConnection()).then(invocation -> postgreSQLContainer.createConnection(""));
         when(dbcpService.getIdentifier()).thenReturn("testConnection");
 

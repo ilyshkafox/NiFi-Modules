@@ -110,10 +110,11 @@
                 <version>2.1.1</version>
                 <executions>
                     <execution>
+                        <id>init</id>
                         <!-- Start the container in any phase before the actual code
                              generation is required, i.e. at the latest in
                              generate-sources -->
-                        <phase>generate-sources</phase>
+                        <phase>initialize</phase>
                         <goals>
                             <goal>execute</goal>
                         </goals>
@@ -129,6 +130,21 @@
                                 // After you've started the container, collect its generated
                                 // JDBC URL (which contains a random port)
                                 project.properties.setProperty('db.url', db.getJdbcUrl())
+                                project.properties.test = db
+                            </source>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                db = project.properties.test
+
+                                db.stop()
                             </source>
                         </configuration>
                     </execution>
@@ -207,6 +223,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
         </plugins>
     </build>
 
