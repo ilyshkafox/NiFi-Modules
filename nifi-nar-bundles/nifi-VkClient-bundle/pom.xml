@@ -17,6 +17,9 @@
         <module>nifi-VkClient-service-api-nar</module>
         <module>nifi-VkClient-service</module>
         <module>nifi-VkClient-service-nar</module>
+        <module>nifi-VkClient-processor</module>
+        <module>nifi-VkClient-nar</module>
+
     </modules>
 
 

@@ -90,5 +90,25 @@
             <version>${project.version}</version>
             <type>nar</type>
         </dependency>
+
+        <!--============================================= VkClient ============-->
+        <dependency>
+            <groupId>ru.ilyshkafox.nifi</groupId>
+            <artifactId>nifi-VkClient-service-api-nar</artifactId>
+            <version>${project.version}</version>
+            <type>nar</type>
+        </dependency>
+        <dependency>
+            <groupId>ru.ilyshkafox.nifi</groupId>
+            <artifactId>nifi-VkClient-service-nar</artifactId>
+            <version>${project.version}</version>
+            <type>nar</type>
+        </dependency>
+        <dependency>
+            <groupId>ru.ilyshkafox.nifi</groupId>
+            <artifactId>nifi-VkClient-nar</artifactId>
+            <version>${project.version}</version>
+            <type>nar</type>
+        </dependency>
     </dependencies>
 </project>
