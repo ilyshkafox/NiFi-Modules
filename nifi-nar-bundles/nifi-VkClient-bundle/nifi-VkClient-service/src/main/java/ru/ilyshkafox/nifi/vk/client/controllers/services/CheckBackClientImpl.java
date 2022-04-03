@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import ru.ilyshkafox.nifi.vk.client.controllers.CheckBackClient;
-import ru.ilyshkafox.nifi.vk.client.controllers.dto.Headers;
-import ru.ilyshkafox.nifi.vk.client.controllers.dto.HeadersType;
-import ru.ilyshkafox.nifi.vk.client.controllers.dto.ScanResponse;
+import ru.ilyshkafox.nifi.vk.client.controllers.dto.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -90,12 +88,7 @@ public class CheckBackClientImpl implements CheckBackClient {
     }
 
     public ScanResponse getScan(int page) {
-        if (lastRequestTime.plusSeconds(5).isAfter(OffsetDateTime.now())) {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException ignore) {
-            }
-        }
+        requestDelay();
         try {
             String scan = getScan0(xVkAuth, page, DEFAULT_PAGE_SIZE);
             lastRequestTime = OffsetDateTime.now();
@@ -104,6 +97,7 @@ public class CheckBackClientImpl implements CheckBackClient {
             throw new RuntimeException(e);
         }
     }
+
 
     public String getScan0(String xVkAuth, int page, int limit) throws IOException, InterruptedException {
         Headers headers = vkWebService.getHeaders(HeadersType.CHECKBACK_REST_HEADER);
@@ -122,5 +116,53 @@ public class CheckBackClientImpl implements CheckBackClient {
                 .build();
         HttpResponse<String> htmlPage = vkWebService.send(request);
         return htmlPage.body();
+    }
+
+
+    @Override
+    public PostScanResponse postScan(final String qrString) {
+        requestDelay();
+        try {
+            String scan = postScan0(xVkAuth, qrString);
+            lastRequestTime = OffsetDateTime.now();
+            PostScanResponse response = objectMapper.readValue(scan, PostScanResponse.class);
+            response.setResponseString(scan);
+            return response;
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public String postScan0(final String xVkAuth, final String quString) throws IOException, InterruptedException {
+        Headers headers = vkWebService.getHeaders(HeadersType.CHECKBACK_REST_HEADER);
+
+
+        HttpRequest request = HttpRequest.newBuilder(URI.create("https://static.checkback.vkforms.ru/api/v1/scan"))
+                .header("accept", "application/json")
+                .header("accept-language", headers.getAcceptLanguage())
+                .header("Cache-Control", headers.getCacheControl())
+                .header("referer", CHECKBACK_INDEX_URL + xVkAuth)
+                .header("sec-ch-ua", headers.getSecChUa())
+                .header("sec-ch-ua-mobile", headers.getSecChUaMobile())
+                .header("Sec-Fetch-Dest", headers.getSecFetchDest())
+                .header("Sec-Fetch-Mode", headers.getSecFetchMode())
+                .header("Sec-Fetch-Site", headers.getSecFetchSite())
+                .header("user-agent", headers.getUserAgent())
+                .header("X-vk-sign", xVkAuth)
+                .POST(PostScanRequest.of(quString).toBodyPublishers())
+                .build();
+
+        HttpResponse<String> htmlPage = vkWebService.send(request);
+        return htmlPage.body();
+    }
+
+    private void requestDelay() {
+        if (lastRequestTime.plusSeconds(5).isAfter(OffsetDateTime.now())) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignore) {
+            }
+        }
     }
 }

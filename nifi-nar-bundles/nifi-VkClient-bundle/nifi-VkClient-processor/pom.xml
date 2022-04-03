@@ -13,6 +13,16 @@
     <packaging>jar</packaging>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.1.3</version>
+        </dependency>
+
+
+
+
         <dependency>
             <groupId>ru.ilyshkafox.nifi</groupId>
             <artifactId>nifi-VkClient-service-api</artifactId>
@@ -46,7 +56,24 @@
             <artifactId>nifi-mock-record-utils</artifactId>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
+        <dependency>
+            <groupId>ru.ilyshkafox.nifi</groupId>
+            <artifactId>nifi-VkClient-service</artifactId>
+            <version>0.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.nifi</groupId>
+            <artifactId>nifi-dbcp-service-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.3.3</version>
+            <scope>test</scope>
+        </dependency>
+        <!--        <dependency>-->
 <!--            <groupId>org.apache.nifi</groupId>-->
 <!--            <artifactId>nifi-utils</artifactId>-->
 <!--        </dependency>-->

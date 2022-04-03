@@ -45,3 +45,4 @@ buildNumber.properties
 out
 gen
 /target/
+/nifi-nar-bundles/nifi-VkClient-bundle/nifi-VkClient-processor/src/test/resources/login.vk.com_02-04-2022.json
