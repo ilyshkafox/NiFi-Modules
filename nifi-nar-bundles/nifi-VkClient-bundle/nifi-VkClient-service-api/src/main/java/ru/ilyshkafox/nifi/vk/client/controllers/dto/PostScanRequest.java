@@ -28,12 +28,4 @@ public class PostScanRequest {
     public static PostScanRequest of(String qrString) {
         return new PostScanRequest(-1, null, qrString, "handed");
     }
-
-    public HttpRequest.BodyPublisher toBodyPublishers() {
-        try {
-            return HttpRequest.BodyPublishers.ofString(OBJECT_MAPPER.writeValueAsString(this));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Не удалось сформировать запрос.", e);
-        }
-    }
 }

@@ -5,53 +5,39 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import ru.ilyshkafox.nifi.vk.client.controllers.CheckBackClient;
 import ru.ilyshkafox.nifi.vk.client.controllers.dto.*;
+import ru.ilyshkafox.nifi.vk.client.controllers.webclient.WebClient;
+import ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.ContentType;
+import ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.HttpResponse;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.OffsetDateTime;
 import java.util.Iterator;
+import java.util.Map;
 
 
 @RequiredArgsConstructor
 public class CheckBackClientImpl implements CheckBackClient {
-    private final static String CHECKBACK_INDEX_URL = "https://static.checkback.vkforms.ru/vkapps/index.html";
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
+    private final static String CHECKBACK_INDEX_URL = "https://static.checkback.vkforms.ru/vkapps/index.html";
     private static final int DEFAULT_PAGE_SIZE = 100;
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private final String xVkAuth;
-    private final VkWebService vkWebService;
+    private final Map<HeadersType, Headers> headersMap;
+    private final WebClient webClient;
     @Getter
     private OffsetDateTime lastRequestTime = OffsetDateTime.now();
 
     public boolean hasCheckBackLogin(String xVkAuth) {
         try {
-            boolean hasLogin = hasCheckBackLogin0(xVkAuth);
+            Map<String, String> header = headersMap.get(HeadersType.CHECKBACK_INDEX).toMap();
+            HttpResponse htmlPage = webClient.get(URI.create(CHECKBACK_INDEX_URL + xVkAuth), header);
             lastRequestTime = OffsetDateTime.now();
-            return hasLogin;
+            return htmlPage.getStatusCode() == 200;
         } catch (Exception exception) {
             throw new RuntimeException(exception);
         }
-    }
-
-    private boolean hasCheckBackLogin0(String xVkAuth) throws IOException, InterruptedException {
-        Headers headers = vkWebService.getHeaders(HeadersType.CHECKBACK_INDEX);
-        HttpRequest request = HttpRequest.newBuilder(URI.create(CHECKBACK_INDEX_URL + xVkAuth)).GET()
-                .header("accept", headers.getAccept())
-                .header("accept-language", headers.getAcceptLanguage())
-                .header("referer", headers.getReferer())
-                .header("sec-ch-ua", headers.getSecChUa())
-                .header("sec-ch-ua-mobile", headers.getSecChUaMobile())
-                .header("sec-fetch-dest", headers.getSecFetchDest())
-                .header("sec-fetch-mode", headers.getSecFetchMode())
-                .header("sec-fetch-site", headers.getSecFetchSite())
-                .header("upgrade-insecure-requests", headers.getUpgradeInsecureRequests())
-                .header("user-agent", headers.getUserAgent())
-                .build();
-
-        HttpResponse<String> htmlPage = vkWebService.send(request);
-        return htmlPage.statusCode() == 200;
     }
 
 
@@ -90,32 +76,14 @@ public class CheckBackClientImpl implements CheckBackClient {
     public ScanResponse getScan(int page) {
         requestDelay();
         try {
-            String scan = getScan0(xVkAuth, page, DEFAULT_PAGE_SIZE);
+            Map<String, String> header = headersMap.get(HeadersType.CHECKBACK_REST_HEADER).toMap();
+            header.put("X-vk-sign", xVkAuth);
+            HttpResponse htmlPage = webClient.get(URI.create("https://static.checkback.vkforms.ru/api/v1/scan?page=" + page + "&limit=" + DEFAULT_PAGE_SIZE + "&x2=0&notifications_allowed=true&mobile=1&android=0&category_id=12"), header);
             lastRequestTime = OffsetDateTime.now();
-            return objectMapper.readValue(scan, ScanResponse.class);
-        } catch (IOException | InterruptedException e) {
+            return objectMapper.readValue(htmlPage.getBody(), ScanResponse.class);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-
-    public String getScan0(String xVkAuth, int page, int limit) throws IOException, InterruptedException {
-        Headers headers = vkWebService.getHeaders(HeadersType.CHECKBACK_REST_HEADER);
-        HttpRequest request = HttpRequest.newBuilder(URI.create("https://static.checkback.vkforms.ru/api/v1/scan?page=" + page + "&limit=" + limit + "&x2=0&notifications_allowed=true&mobile=1&android=0&category_id=12")).GET()
-                .header("accept", headers.getAccept())
-                .header("accept-language", headers.getAcceptLanguage())
-                .header("Cache-Control", headers.getCacheControl())
-                .header("referer", CHECKBACK_INDEX_URL + xVkAuth)
-                .header("sec-ch-ua", headers.getSecChUa())
-                .header("sec-ch-ua-mobile", headers.getSecChUaMobile())
-                .header("Sec-Fetch-Dest", headers.getSecFetchDest())
-                .header("Sec-Fetch-Mode", headers.getSecFetchMode())
-                .header("Sec-Fetch-Site", headers.getSecFetchSite())
-                .header("user-agent", headers.getUserAgent())
-                .header("X-vk-sign", xVkAuth)
-                .build();
-        HttpResponse<String> htmlPage = vkWebService.send(request);
-        return htmlPage.body();
     }
 
 
@@ -123,39 +91,21 @@ public class CheckBackClientImpl implements CheckBackClient {
     public PostScanResponse postScan(final String qrString) {
         requestDelay();
         try {
-            String scan = postScan0(xVkAuth, qrString);
+            Map<String, String> header = headersMap.get(HeadersType.CHECKBACK_REST_HEADER).toMap();
+            header.put("referer", CHECKBACK_INDEX_URL + xVkAuth);
+            header.put("X-vk-sign", xVkAuth);
+            HttpResponse htmlPage = webClient.post(URI.create("https://static.checkback.vkforms.ru/api/v1/scan"), header,
+                    OBJECT_MAPPER.writeValueAsString(PostScanRequest.of(qrString)), ContentType.APPLICATION_JSON);
+
             lastRequestTime = OffsetDateTime.now();
-            PostScanResponse response = objectMapper.readValue(scan, PostScanResponse.class);
-            response.setResponseString(scan);
+            PostScanResponse response = htmlPage.getBody(PostScanResponse.class);
+            response.setResponseString(htmlPage.getBody());
             return response;
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-
-    public String postScan0(final String xVkAuth, final String quString) throws IOException, InterruptedException {
-        Headers headers = vkWebService.getHeaders(HeadersType.CHECKBACK_REST_HEADER);
-
-
-        HttpRequest request = HttpRequest.newBuilder(URI.create("https://static.checkback.vkforms.ru/api/v1/scan"))
-                .header("accept", "application/json")
-                .header("accept-language", headers.getAcceptLanguage())
-                .header("Cache-Control", headers.getCacheControl())
-                .header("referer", CHECKBACK_INDEX_URL + xVkAuth)
-                .header("sec-ch-ua", headers.getSecChUa())
-                .header("sec-ch-ua-mobile", headers.getSecChUaMobile())
-                .header("Sec-Fetch-Dest", headers.getSecFetchDest())
-                .header("Sec-Fetch-Mode", headers.getSecFetchMode())
-                .header("Sec-Fetch-Site", headers.getSecFetchSite())
-                .header("user-agent", headers.getUserAgent())
-                .header("X-vk-sign", xVkAuth)
-                .POST(PostScanRequest.of(quString).toBodyPublishers())
-                .build();
-
-        HttpResponse<String> htmlPage = vkWebService.send(request);
-        return htmlPage.body();
-    }
 
     private void requestDelay() {
         if (lastRequestTime.plusSeconds(5).isAfter(OffsetDateTime.now())) {

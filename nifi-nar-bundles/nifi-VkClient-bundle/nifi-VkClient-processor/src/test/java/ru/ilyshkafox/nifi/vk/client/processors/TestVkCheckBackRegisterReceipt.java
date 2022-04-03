@@ -6,6 +6,7 @@ import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.cookie.BasicCookieStore;
 import org.apache.hc.client5.http.cookie.Cookie;
 import org.apache.hc.client5.http.cookie.CookieStore;
+import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -180,8 +181,10 @@ class TestVkCheckBackRegisterReceipt {
         final BasicCookieStore cookieStore = new BasicCookieStore();
         try (final CloseableHttpClient httpclient = HttpClients.custom()
                 .setDefaultCookieStore(cookieStore)
+                .setRedirectStrategy(new DefaultRedirectStrategy())
                 .build()) {
-            final HttpGet httpget = new HttpGet("https://someportal/");
+
+            final HttpGet httpget = new HttpGet("https://www.google.ru/");
             try (final CloseableHttpResponse response1 = httpclient.execute(httpget)) {
                 final HttpEntity entity = response1.getEntity();
 
@@ -200,7 +203,7 @@ class TestVkCheckBackRegisterReceipt {
             }
 
             final ClassicHttpRequest login = ClassicRequestBuilder.post()
-                    .setUri(new URI("https://someportal/"))
+                    .setUri(new URI("https://www.google.ru/"))
                     .addParameter("IDToken1", "username")
                     .addParameter("IDToken2", "password")
                     .build();

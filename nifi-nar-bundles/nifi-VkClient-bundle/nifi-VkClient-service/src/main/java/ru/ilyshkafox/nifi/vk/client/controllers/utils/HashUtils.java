@@ -1,5 +1,6 @@
 package ru.ilyshkafox.nifi.vk.client.controllers.utils;
 
+import org.apache.hc.client5.http.cookie.Cookie;
 import org.flywaydb.core.internal.util.StringUtils;
 
 import java.net.HttpCookie;
@@ -32,6 +33,30 @@ public abstract class HashUtils {
         String value = format(cookie.getValue());
         return getCRC32Checksum((name + domain + path + value).getBytes(StandardCharsets.ISO_8859_1));
     }
+
+
+    public static long getCookie5Hash(List<Cookie> httpCookie) {
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES * httpCookie.size());
+
+        httpCookie.stream()
+                .sorted(Comparator.comparing(Cookie::getDomain)
+                        .thenComparing(Cookie::getName)
+                        .thenComparing(Cookie::getPath)
+                        .thenComparing(Cookie::getValue)
+                )
+                .map(HashUtils::getHash5Code)
+                .forEach(buffer::putLong);
+        return getCRC32Checksum(buffer.array());
+    }
+
+    private static long getHash5Code(Cookie cookie) {
+        String name = format(cookie.getName());
+        String domain = format(cookie.getDomain());
+        String path = format(cookie.getPath());
+        String value = format(cookie.getValue());
+        return getCRC32Checksum((name + domain + path + value).getBytes(StandardCharsets.ISO_8859_1));
+    }
+
 
     private static String format(String val) {
         return val == null ? "" : val.toLowerCase();

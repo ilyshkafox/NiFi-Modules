@@ -3,6 +3,9 @@ package ru.ilyshkafox.nifi.vk.client.controllers;
 //import lombok.extern.slf4j.Slf4j;
 
 import lombok.Getter;
+import org.apache.hc.client5.http.cookie.Cookie;
+import org.apache.hc.client5.http.cookie.CookieStore;
+import org.apache.hc.core5.io.Closer;
 import org.apache.nifi.annotation.behavior.RequiresInstanceClassLoading;
 import org.apache.nifi.annotation.documentation.CapabilityDescription;
 import org.apache.nifi.annotation.documentation.Tags;
@@ -20,8 +23,10 @@ import org.jooq.impl.DSL;
 import ru.ilyshkafox.nifi.vk.client.controllers.cookieencoder.AesCookieEncoder;
 import ru.ilyshkafox.nifi.vk.client.controllers.cookieencoder.CookieEncoder;
 import ru.ilyshkafox.nifi.vk.client.controllers.cookieencoder.NoCookieEncoder;
-import ru.ilyshkafox.nifi.vk.client.controllers.cookiestore.VkCookieStore;
+import ru.ilyshkafox.nifi.vk.client.controllers.cookiestore.VkCookieStore5;
 import ru.ilyshkafox.nifi.vk.client.controllers.dao.J2TeamCookies;
+import ru.ilyshkafox.nifi.vk.client.controllers.dto.Headers;
+import ru.ilyshkafox.nifi.vk.client.controllers.dto.HeadersType;
 import ru.ilyshkafox.nifi.vk.client.controllers.repo.CookieRepo;
 import ru.ilyshkafox.nifi.vk.client.controllers.repo.KeyValueRepo;
 import ru.ilyshkafox.nifi.vk.client.controllers.services.CheckBackClientImpl;
@@ -30,15 +35,18 @@ import ru.ilyshkafox.nifi.vk.client.controllers.utils.Assert;
 import ru.ilyshkafox.nifi.vk.client.controllers.utils.HashUtils;
 import ru.ilyshkafox.nifi.vk.client.controllers.utils.J2TeamCookiesMapper;
 import ru.ilyshkafox.nifi.vk.client.controllers.utils.UpdateDataBaseUtils;
+import ru.ilyshkafox.nifi.vk.client.controllers.webclient.Http5WebClient;
+import ru.ilyshkafox.nifi.vk.client.controllers.webclient.WebClient;
 
 import javax.sql.DataSource;
-import java.net.CookieManager;
-import java.net.CookieStore;
-import java.net.HttpCookie;
+import java.io.IOException;
 import java.net.URI;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
+
+;
 
 @RequiresInstanceClassLoading
 @Tags({"ilyshkafox", "client", "vk", "cashback"})
@@ -52,9 +60,9 @@ public class VkClientService extends AbstractControllerService implements BaseVk
     private CookieEncoder cockeEncoder;
     private CookieRepo cookieRepo;
     private CookieStore cookieStore;
-    private VkWebService webBrowser;
-    private CookieManager cookieManager;
-
+    private WebClient webClient;
+    private VkWebService webService;
+    private Map<HeadersType, Headers> headers;
 
     @Getter
     private final List<PropertyDescriptor> supportedPropertyDescriptors = List.of(
@@ -73,7 +81,7 @@ public class VkClientService extends AbstractControllerService implements BaseVk
         log.info("Запуск VkClient сервиса.");
 
         var property = new VkClientServiceProperty(context);
-
+        headers = property.getHeaders();
         initDataSource(property);
         initRepositoryStep1(property);
         migration(property);
@@ -90,8 +98,7 @@ public class VkClientService extends AbstractControllerService implements BaseVk
             getLogger().warn("Валидация авторизации отключена! ");
             return;
         }
-
-        if (!webBrowser.checkLogin()) {
+        if (!webService.checkLogin()) {
             throw new InitializationException("Пользователь VK не авторизирован!");
         }
         getLogger().info("Авторизация VK произошла успешно!");
@@ -99,7 +106,7 @@ public class VkClientService extends AbstractControllerService implements BaseVk
     }
 
     @OnDisabled
-    public void shutdown() {
+    public void shutdown() throws IOException {
         keyValueRepo = null;
         dataSource = null;
         cookieRepo = null;
@@ -107,8 +114,9 @@ public class VkClientService extends AbstractControllerService implements BaseVk
         cockeEncoder = null;
         dsl = null;
         cookieStore = null;
-        webBrowser = null;
-        cookieManager = null;
+        headers = null;
+        Closer.close(webService);
+        webService = null;
     }
 
     @Override
@@ -152,27 +160,26 @@ public class VkClientService extends AbstractControllerService implements BaseVk
     private void initRepositoryStep2CookieStore(final VkClientServiceProperty property) throws InitializationException {
         J2TeamCookies j2TeamCookies = property.loadVkJ2teamCooke();
         URI uri = URI.create(j2TeamCookies.getUrl());
-        List<HttpCookie> httpCookie = J2TeamCookiesMapper.map(j2TeamCookies);
+        List<Cookie> httpCookie = J2TeamCookiesMapper.mapHttp5(j2TeamCookies);
 
         long curHash = keyValueRepo.get(HASH_COOKIE_KEY).map(Long::parseLong).orElse(-1L);
-        long newHash = HashUtils.getCookieHash(httpCookie);
+        long newHash = HashUtils.getCookie5Hash(httpCookie);
 
         if (curHash != newHash) {
             cookieRepo.deleteAll();
-            cookieStore = new VkCookieStore(cookieRepo, cockeEncoder, getLogger());
-            httpCookie.forEach(hc -> cookieStore.add(uri, hc));
+            cookieStore = new VkCookieStore5(cookieRepo, cockeEncoder, getLogger());
+            httpCookie.forEach(hc -> cookieStore.addCookie(hc));
             updateCookieMetadata(newHash);
             getLogger().info("Куки обновлены!");
         } else {
             validateCookieMetadata();
-            cookieStore = new VkCookieStore(cookieRepo, cockeEncoder, getLogger());
+            cookieStore = new VkCookieStore5(cookieRepo, cockeEncoder, getLogger());
         }
-        cookieManager = new CookieManager(cookieStore, null);
-
     }
 
     private void initWebBrowser(final VkClientServiceProperty property) throws InitializationException {
-        webBrowser = new VkWebService(getLogger(), property.getHeaders(), cookieManager);
+        webClient = new Http5WebClient(new VkCookieStore5(cookieRepo, cockeEncoder, getLogger()));
+        webService = new VkWebService(getLogger(), headers, webClient);
     }
 
     private void updateCookieMetadata(final long newHttpCookieHash) {
@@ -217,7 +224,7 @@ public class VkClientService extends AbstractControllerService implements BaseVk
     }
 
     private void createCheckBackClient() {
-        String checkBackXAuth = webBrowser.getCheckBackXAuth();
-        checkBackClient = new CheckBackClientImpl(checkBackXAuth, webBrowser);
+        String checkBackXAuth = webService.getCheckBackXAuth();
+        checkBackClient = new CheckBackClientImpl(checkBackXAuth, headers, webClient);
     }
 }
