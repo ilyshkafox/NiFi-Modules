@@ -1,0 +1,16 @@
+POST https://api.vk.com/method/messages.getLongPollServer?v=5.178&client_id=6287487
+content-type: application/x-www-form-urlencoded
+cookie: remixlang=0; remixstid=0_3mnZmDXyiM7vdVeERZugIbPfi1fl0DrWyvyhuS7zZXH; remixbdr=1; remixflash=0.0.0; remixscreen_width=2560; remixscreen_height=1440; remixscreen_dpr=1; remixscreen_depth=24; remixscreen_orient=1; remixscreen_winzoom=1.59; remixgp=56689277f1af6ee47e58ebc731525fbd; remixdt=0; remixQUIC=1; remixuas=ZWJmOWU3NjRlNzIxN2JhZDY0NjMyM2Jm; remixstlid=60383309288_k85XeoUFOPQARWfL9eU8K06hz68rjvSdyROZu3J3fmH; remixsid=1_pS2wWGemOMMxDiu2N-93SvYHvDxvA4ax8RL0tkH_NCF-R8kXpuyzN8S9PrajLz2y-DLibeTG_JSIx5RggMZ7XQ; remixdmgr_tmp=e160532a2460a9a6027ab75ae6838464e04524f2ef87b96b338a6b4d55d2e80f; remixdmgr=e6f88ba5d3b00991bdf39eb10788de5f86dda9bf1a0b2b9129b3c85220311c28; remixseenads=2
+
+need_pts=1&lp_version=19&extended=1&fields=id%2Cfirst_name%2Cfirst_name_gen%2Cfirst_name_acc%2Clast_name%2Clast_name_gen%2Clast_name_acc%2Csex%2Cphoto_50%2Cphoto_100%2Cphoto_200%2Ccontact_name%2Coccupation%2Cbdate%2Ccity%2Cscreen_name%2Conline_info%2Cverified%2Cblacklisted%2Cblacklisted_by_me%2Ccan_call%2Ccan_write_private_message%2Ccan_send_friend_request%2Cfriend_status%2Cfollowers_count%2Cname%2Ctype%2Cmembers_count%2Cmember_status%2Cis_closed%2Ccan_message%2Cdeactivated%2Cactivity%2Cban_info&access_token=9b2e3f862e3f8b5576b2548895c4c57401368d7a7a6b25d8176ff0c5f96b4fb4dc5736f903ff30a35a51c
+
+###
+
+GET https://vk.com/services
+cookie: remixlang=0; remixstid=0_3mnZmDXyiM7vdVeERZugIbPfi1fl0DrWyvyhuS7zZXH; remixbdr=1; remixflash=0.0.0; remixscreen_width=2560; remixscreen_height=1440; remixscreen_dpr=1; remixscreen_depth=24; remixscreen_orient=1; remixscreen_winzoom=1.59; remixgp=56689277f1af6ee47e58ebc731525fbd; remixdt=0; remixQUIC=1; remixuas=ZWJmOWU3NjRlNzIxN2JhZDY0NjMyM2Jm; remixstlid=60383309288_k85XeoUFOPQARWfL9eU8K06hz68rjvSdyROZu3J3fmH; remixsid=1_pS2wWGemOMMxDiu2N-93SvYHvDxvA4ax8RL0tkH_NCF-R8kXpuyzN8S9PrajLz2y-DLibeTG_JSIx5RggMZ7XQ; remixdmgr_tmp=e160532a2460a9a6027ab75ae6838464e04524f2ef87b96b338a6b4d55d2e80f; remixdmgr=e6f88ba5d3b00991bdf39eb10788de5f86dda9bf1a0b2b9129b3c85220311c28; remixseenads=2
+
+###
+
+POST https://api.vk.com/method/users.get?v=5.178&client_id=62874
+content-type: application/x-www-form-urlencoded
+cookie: remixlang=0; remixstid=0_3mnZmDXyiM7vdVeERZugIbPfi1fl0DrWyvyhuS7zZXH; remixbdr=1; remixflash=0.0.0; remixscreen_width=2560; remixscreen_height=1440; remixscreen_dpr=1; remixscreen_depth=24; remixscreen_orient=1; remixscreen_winzoom=1.59; remixgp=56689277f1af6ee47e58ebc731525fbd; remixdt=0; remixQUIC=1; remixuas=ZWJmOWU3NjRlNzIxN2JhZDY0NjMyM2Jm; remixstlid=60383309288_k85XeoUFOPQARWfL9eU8K06hz68rjvSdyROZu3J3fmH; remixsid=1_pS2wWGemOMMxDiu2N-93SvYHvDxvA4ax8RL0tkH_NCF-R8kXpuyzN8S9PrajLz2y-DLibeTG_JSIx5RggMZ7XQ; remixdmgr_tmp=e160532a2460a9a6027ab75ae6838464e04524f2ef87b96b338a6b4d55d2e80f; remixdmgr=e6f88ba5d3b00991bdf39eb10788de5f86dda9bf1a0b2b9129b3c85220311c28; remixseenads=2

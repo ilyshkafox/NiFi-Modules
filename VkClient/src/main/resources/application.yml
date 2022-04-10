@@ -1,0 +1,6 @@
+ru.ilyshka_fox.service:
+  rucaptcha.api-key: 9b65c6f3637309baff75b0d5758d0b0b
+  web-client.max-in-memory-size: 16777216
+  vk:
+    login: ilya_moslov@mail.ru
+    password:

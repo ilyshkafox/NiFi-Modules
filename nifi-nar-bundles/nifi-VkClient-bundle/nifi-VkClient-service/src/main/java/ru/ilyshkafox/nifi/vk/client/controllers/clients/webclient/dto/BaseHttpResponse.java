@@ -1,4 +1,4 @@
-package ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto;
+package ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

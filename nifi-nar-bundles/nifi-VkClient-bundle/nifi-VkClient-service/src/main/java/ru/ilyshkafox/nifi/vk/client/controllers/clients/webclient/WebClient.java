@@ -1,8 +1,8 @@
-package ru.ilyshkafox.nifi.vk.client.controllers.webclient;
+package ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient;
 
 
-import ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.ContentType;
-import ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.HttpResponse;
+import ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.HttpResponse;
+import ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.ContentType;
 
 import java.io.Closeable;
 import java.net.URI;
@@ -14,6 +14,8 @@ public interface WebClient extends Closeable {
     HttpResponse send(String method, URI url, Map<String, String> headers, String body);
 
     HttpResponse send(String method, URI url, Map<String, String> headers);
+
+    HttpResponse get(URI url);
 
     HttpResponse get(URI url, Map<String, String> headers);
 

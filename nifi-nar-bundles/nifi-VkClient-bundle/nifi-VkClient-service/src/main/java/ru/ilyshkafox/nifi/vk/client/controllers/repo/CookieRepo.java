@@ -13,7 +13,7 @@ import static org.jooq.generated.Tables.COOKIE;
 
 @RequiredArgsConstructor
 public class CookieRepo {
-    public final Cookie TABLE = COOKIE.as(DSL.name(COOKIE.getName()));
+    public final Cookie TABLE = COOKIE;
 
     private final DSLContext dsl;
 

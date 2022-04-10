@@ -1,4 +1,4 @@
-package ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto;
+package ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto;
 
 import lombok.Data;
 

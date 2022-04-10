@@ -1,7 +1,7 @@
-package ru.ilyshkafox.nifi.vk.client.controllers.webclient;
+package ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient;
 
-import ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.BaseHttpResponse;
-import ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.ContentType;
+import ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.BaseHttpResponse;
+import ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.ContentType;
 
 import java.io.IOException;
 import java.net.CookieManager;
@@ -10,8 +10,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class HttpWebClient implements WebClient {
@@ -21,13 +19,13 @@ public class HttpWebClient implements WebClient {
     public HttpWebClient(final CookieManager cookieManager) {
         this.httpClient = HttpClient.newBuilder()
                 .cookieHandler(cookieManager)
-                .followRedirects(HttpClient.Redirect.ALWAYS)
+                .followRedirects(HttpClient.Redirect.NEVER)
                 .build();
     }
 
 
     @Override
-    public ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.HttpResponse send(String method, URI url, Map<String, String> headers, String body, ContentType contentType) {
+    public ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.HttpResponse send(String method, URI url, Map<String, String> headers, String body, ContentType contentType) {
         HttpRequest.Builder builder = HttpRequest.newBuilder(url);
         headers.forEach((name, value) -> {
             if (!name.equalsIgnoreCase("Content-Type")) builder.header(name, value);
@@ -48,46 +46,51 @@ public class HttpWebClient implements WebClient {
 
 
     @Override
-    public ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.HttpResponse send(String method, URI url, Map<String, String> headers, String body) {
+    public ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.HttpResponse send(String method, URI url, Map<String, String> headers, String body) {
         return send(method, url, headers, body, null);
     }
 
     @Override
-    public ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.HttpResponse send(String method, URI url, Map<String, String> headers) {
+    public ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.HttpResponse send(String method, URI url, Map<String, String> headers) {
         return send(method, url, headers, null, null);
     }
 
     @Override
-    public ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.HttpResponse get(URI url, Map<String, String> headers) {
+    public ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.HttpResponse get(URI url) {
+        return send("GET", url, Map.of(), null, null);
+    }
+
+    @Override
+    public ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.HttpResponse get(URI url, Map<String, String> headers) {
         return send("GET", url, headers, null, null);
     }
 
     @Override
-    public ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.HttpResponse post(URI url, Map<String, String> headers, String body, ContentType contentType) {
+    public ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.HttpResponse post(URI url, Map<String, String> headers, String body, ContentType contentType) {
         return send("POST", url, headers, body, contentType);
     }
 
     @Override
-    public ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.HttpResponse post(URI url, Map<String, String> headers, String body) {
+    public ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.HttpResponse post(URI url, Map<String, String> headers, String body) {
         return send("POST", url, headers, body, null);
     }
 
     @Override
-    public ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.HttpResponse put(URI url, Map<String, String> headers, String body, ContentType contentType) {
+    public ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.HttpResponse put(URI url, Map<String, String> headers, String body, ContentType contentType) {
         return send("PUT", url, headers, body, contentType);
     }
 
     @Override
-    public ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.HttpResponse put(URI url, Map<String, String> headers, String body) {
+    public ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.HttpResponse put(URI url, Map<String, String> headers, String body) {
         return send("PUT", url, headers, body, null);
     }
 
     @Override
-    public ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.HttpResponse delete(URI url, Map<String, String> headers) {
+    public ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.HttpResponse delete(URI url, Map<String, String> headers) {
         return send("DELETE", url, headers, null, null);
     }
 
-    private ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.HttpResponse mapHttpResponse(HttpResponse<String> response) {
+    private ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.HttpResponse mapHttpResponse(HttpResponse<String> response) {
         return new BaseHttpResponse(
                 response.uri(),
                 response.statusCode(),

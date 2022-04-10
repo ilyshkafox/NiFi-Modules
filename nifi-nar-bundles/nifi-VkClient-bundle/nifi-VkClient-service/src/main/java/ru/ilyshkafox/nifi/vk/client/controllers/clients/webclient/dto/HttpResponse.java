@@ -1,4 +1,4 @@
-package ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto;
+package ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -16,4 +16,8 @@ public interface HttpResponse {
     <T> T getBody(Class<T> tClass) throws JsonProcessingException;
 
     Map<String, List<String>> getHeaders();
+
+    default boolean is2xxStatus() {
+        return getStatusCode() >= 200 && getStatusCode() < 300;
+    }
 }

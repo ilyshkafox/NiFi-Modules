@@ -5,13 +5,14 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import ru.ilyshkafox.nifi.vk.client.controllers.CheckBackClient;
 import ru.ilyshkafox.nifi.vk.client.controllers.dto.*;
-import ru.ilyshkafox.nifi.vk.client.controllers.webclient.WebClient;
-import ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.ContentType;
-import ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.HttpResponse;
+import ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.WebClient;
+import ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.ContentType;
+import ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.HttpResponse;
 
 import java.io.IOException;
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 

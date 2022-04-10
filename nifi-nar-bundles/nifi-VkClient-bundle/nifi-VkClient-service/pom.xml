@@ -217,6 +217,7 @@
                         <database>
                             <includes>.*</includes>
                             <inputSchema>${db.schema.vk}</inputSchema>
+                            <outputSchemaToDefault>true</outputSchemaToDefault>
                         </database>
                     </generator>
                 </configuration>

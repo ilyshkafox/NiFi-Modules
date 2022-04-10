@@ -2,15 +2,12 @@ package ru.ilyshkafox.nifi.vk.client.processors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.cookie.BasicCookieStore;
 import org.apache.hc.client5.http.cookie.Cookie;
-import org.apache.hc.client5.http.cookie.CookieStore;
 import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.client5.http.impl.cookie.BasicClientCookie;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 
 import org.apache.hc.core5.http.ClassicHttpRequest;
@@ -18,6 +15,7 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
+import org.apache.log4j.spi.Configurator;
 import org.apache.nifi.dbcp.DBCPService;
 import org.apache.nifi.reporting.InitializationException;
 import org.apache.nifi.util.MockFlowFile;
@@ -62,21 +60,11 @@ class TestVkCheckBackRegisterReceipt {
         MockitoAnnotations.openMocks(this);
     }
 
-    private TestRunner getTestRunner(
-            String vkClientId
-    ) {
-        final TestRunner runner = TestRunners.newTestRunner(VkCheckBackRegisterReceipt.class);
-        runner.enforceReadStreamsClosed(false);
-        runner.setProperty(VkCheckBackRegisterReceipt.VK_CLIENT, vkClientId);
-        runner.setProperty(VkCheckBackRegisterReceipt.QR_STRING, "${qr}");
-        return runner;
-    }
-
-
     @Test
     @Ignore("Тестирование на реальных данных")
     public void realTest() throws InitializationException, IOException {
         LogManager.getRootLogger().setLevel(Level.TRACE);
+        LogManager.getLogger("org.apache.hc.client5").setLevel(Level.TRACE);
 
         initTestRunner();
         readJsonData();
@@ -103,7 +91,7 @@ class TestVkCheckBackRegisterReceipt {
     }
 
     private void readJsonData() throws IOException {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("login.vk.com_02-04-2022.json");
+        InputStream is = getClass().getClassLoader().getResourceAsStream("login.vk.com.json");
         jsonData = IOUtils.toString(is, StandardCharsets.UTF_8);
     }
 
@@ -176,54 +164,54 @@ class TestVkCheckBackRegisterReceipt {
 //        System.out.println(s);
 //    }
 
-    @Test
-    void test3() throws IOException, URISyntaxException {
-        final BasicCookieStore cookieStore = new BasicCookieStore();
-        try (final CloseableHttpClient httpclient = HttpClients.custom()
-                .setDefaultCookieStore(cookieStore)
-                .setRedirectStrategy(new DefaultRedirectStrategy())
-                .build()) {
-
-            final HttpGet httpget = new HttpGet("https://www.google.ru/");
-            try (final CloseableHttpResponse response1 = httpclient.execute(httpget)) {
-                final HttpEntity entity = response1.getEntity();
-
-                System.out.println("Login form get: " + response1.getCode() + " " + response1.getReasonPhrase());
-                EntityUtils.consume(entity);
-
-                System.out.println("Initial set of cookies:");
-                final List<Cookie> cookies = cookieStore.getCookies();
-                if (cookies.isEmpty()) {
-                    System.out.println("None");
-                } else {
-                    for (int i = 0; i < cookies.size(); i++) {
-                        System.out.println("- " + cookies.get(i));
-                    }
-                }
-            }
-
-            final ClassicHttpRequest login = ClassicRequestBuilder.post()
-                    .setUri(new URI("https://www.google.ru/"))
-                    .addParameter("IDToken1", "username")
-                    .addParameter("IDToken2", "password")
-                    .build();
-            try (final CloseableHttpResponse response2 = httpclient.execute(login)) {
-                final HttpEntity entity = response2.getEntity();
-
-                System.out.println("Login form get: " + response2.getCode() + " " + response2.getReasonPhrase());
-                EntityUtils.consume(entity);
-
-                System.out.println("Post logon cookies:");
-                final List<Cookie> cookies = cookieStore.getCookies();
-                if (cookies.isEmpty()) {
-                    System.out.println("None");
-                } else {
-                    for (int i = 0; i < cookies.size(); i++) {
-                        System.out.println("- " + cookies.get(i));
-                    }
-                }
-            }
-        }
-    }
+//    @Test
+//    void test3() throws IOException, URISyntaxException {
+//        final BasicCookieStore cookieStore = new BasicCookieStore();
+//        try (final CloseableHttpClient httpclient = HttpClients.custom()
+//                .setDefaultCookieStore(cookieStore)
+//                .setRedirectStrategy(new DefaultRedirectStrategy())
+//                .build()) {
+//
+//            final HttpGet httpget = new HttpGet("https://www.google.ru/");
+//            try (final CloseableHttpResponse response1 = httpclient.execute(httpget)) {
+//                final HttpEntity entity = response1.getEntity();
+//
+//                System.out.println("Login form get: " + response1.getCode() + " " + response1.getReasonPhrase());
+//                EntityUtils.consume(entity);
+//
+//                System.out.println("Initial set of cookies:");
+//                final List<Cookie> cookies = cookieStore.getCookies();
+//                if (cookies.isEmpty()) {
+//                    System.out.println("None");
+//                } else {
+//                    for (int i = 0; i < cookies.size(); i++) {
+//                        System.out.println("- " + cookies.get(i));
+//                    }
+//                }
+//            }
+//
+//            final ClassicHttpRequest login = ClassicRequestBuilder.post()
+//                    .setUri(new URI("https://www.google.ru/"))
+//                    .addParameter("IDToken1", "username")
+//                    .addParameter("IDToken2", "password")
+//                    .build();
+//            try (final CloseableHttpResponse response2 = httpclient.execute(login)) {
+//                final HttpEntity entity = response2.getEntity();
+//
+//                System.out.println("Login form get: " + response2.getCode() + " " + response2.getReasonPhrase());
+//                EntityUtils.consume(entity);
+//
+//                System.out.println("Post logon cookies:");
+//                final List<Cookie> cookies = cookieStore.getCookies();
+//                if (cookies.isEmpty()) {
+//                    System.out.println("None");
+//                } else {
+//                    for (int i = 0; i < cookies.size(); i++) {
+//                        System.out.println("- " + cookies.get(i));
+//                    }
+//                }
+//            }
+//        }
+//    }
 
 }

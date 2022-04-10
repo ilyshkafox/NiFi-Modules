@@ -3,7 +3,6 @@ package ru.ilyshkafox.nifi.vk.client.controllers.repo;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.generated.tables.Storage;
-import org.jooq.impl.DSL;
 
 import java.util.Optional;
 
@@ -12,7 +11,7 @@ import static org.jooq.generated.tables.Storage.STORAGE;
 
 @RequiredArgsConstructor
 public class KeyValueRepo {
-    public final Storage TABLE = STORAGE.as(DSL.name(STORAGE.getName()));
+    public final Storage TABLE = STORAGE;
 
     private final DSLContext dsl;
 

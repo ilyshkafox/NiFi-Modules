@@ -1,7 +1,5 @@
 package ru.ilyshkafox.nifi.vk.client.controllers;
 
-//import lombok.extern.slf4j.Slf4j;
-
 import lombok.Getter;
 import org.apache.hc.client5.http.cookie.Cookie;
 import org.apache.hc.client5.http.cookie.CookieStore;
@@ -14,12 +12,14 @@ import org.apache.nifi.annotation.lifecycle.OnEnabled;
 import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.controller.AbstractControllerService;
 import org.apache.nifi.controller.ConfigurationContext;
-import org.apache.nifi.dbcp.DBCPService;
 import org.apache.nifi.expression.ExpressionLanguageScope;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.nifi.reporting.InitializationException;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
+import ru.ilyshkafox.nifi.vk.client.controllers.clients.vkclient.VkClient;
+import ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.Http5WebClient;
+import ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.WebClient;
 import ru.ilyshkafox.nifi.vk.client.controllers.cookieencoder.AesCookieEncoder;
 import ru.ilyshkafox.nifi.vk.client.controllers.cookieencoder.CookieEncoder;
 import ru.ilyshkafox.nifi.vk.client.controllers.cookieencoder.NoCookieEncoder;
@@ -35,12 +35,9 @@ import ru.ilyshkafox.nifi.vk.client.controllers.utils.Assert;
 import ru.ilyshkafox.nifi.vk.client.controllers.utils.HashUtils;
 import ru.ilyshkafox.nifi.vk.client.controllers.utils.J2TeamCookiesMapper;
 import ru.ilyshkafox.nifi.vk.client.controllers.utils.UpdateDataBaseUtils;
-import ru.ilyshkafox.nifi.vk.client.controllers.webclient.Http5WebClient;
-import ru.ilyshkafox.nifi.vk.client.controllers.webclient.WebClient;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.net.URI;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -70,7 +67,6 @@ public class VkClientService extends AbstractControllerService implements BaseVk
             VkClientServiceProperty.J2TEAM_COOKIE, VkClientServiceProperty.COOKIE_ENCODER, VkClientServiceProperty.COOKIE_ENCODE_KEY
     );
 
-    private DBCPService connectionPool = null;
     private DataSource dataSource;
     private DSLContext dsl = null;
 
@@ -110,7 +106,6 @@ public class VkClientService extends AbstractControllerService implements BaseVk
         keyValueRepo = null;
         dataSource = null;
         cookieRepo = null;
-        connectionPool = null;
         cockeEncoder = null;
         dsl = null;
         cookieStore = null;
@@ -135,10 +130,9 @@ public class VkClientService extends AbstractControllerService implements BaseVk
 
 
     private void initDataSource(final VkClientServiceProperty property) throws InitializationException {
-        connectionPool = property.crateConnectionPool();
-        dataSource = new DBCPServiceDataSourceBridge(connectionPool);
+        var connectionPool = property.crateConnectionPool();
+        dataSource = new DBCPServiceDataSourceBridge(connectionPool, property.getSchemaName());
         dsl = DSL.using(dataSource, property.getSqlDialect());
-        dsl.setSchema(property.getSchemaName()).execute();
     }
 
     private void initRepositoryStep1(final VkClientServiceProperty property) throws InitializationException {
@@ -159,7 +153,6 @@ public class VkClientService extends AbstractControllerService implements BaseVk
 
     private void initRepositoryStep2CookieStore(final VkClientServiceProperty property) throws InitializationException {
         J2TeamCookies j2TeamCookies = property.loadVkJ2teamCooke();
-        URI uri = URI.create(j2TeamCookies.getUrl());
         List<Cookie> httpCookie = J2TeamCookiesMapper.mapHttp5(j2TeamCookies);
 
         long curHash = keyValueRepo.get(HASH_COOKIE_KEY).map(Long::parseLong).orElse(-1L);
@@ -170,7 +163,7 @@ public class VkClientService extends AbstractControllerService implements BaseVk
             cookieStore = new VkCookieStore5(cookieRepo, cockeEncoder, getLogger());
             httpCookie.forEach(hc -> cookieStore.addCookie(hc));
             updateCookieMetadata(newHash);
-            getLogger().info("Куки обновлены!");
+            getLogger().info("Куки обновлены! Загружено {} записей!", cookieStore.getCookies().size());
         } else {
             validateCookieMetadata();
             cookieStore = new VkCookieStore5(cookieRepo, cockeEncoder, getLogger());
@@ -178,8 +171,9 @@ public class VkClientService extends AbstractControllerService implements BaseVk
     }
 
     private void initWebBrowser(final VkClientServiceProperty property) throws InitializationException {
-        webClient = new Http5WebClient(new VkCookieStore5(cookieRepo, cockeEncoder, getLogger()));
-        webService = new VkWebService(getLogger(), headers, webClient);
+        webClient = new Http5WebClient(cookieStore);
+        var vkClient = new VkClient(webClient, headers, getLogger());
+        webService = new VkWebService(vkClient, headers, getLogger());
     }
 
     private void updateCookieMetadata(final long newHttpCookieHash) {

@@ -1,18 +1,18 @@
-package ru.ilyshkafox.nifi.vk.client.controllers.webclient;
+package ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.apache.hc.client5.http.cookie.CookieStore;
-import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-import ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.BaseHttpResponse;
-import ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.ContentType;
-import ru.ilyshkafox.nifi.vk.client.controllers.webclient.dto.HttpResponse;
+import ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.BaseHttpResponse;
+import ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.ContentType;
+import ru.ilyshkafox.nifi.vk.client.controllers.clients.webclient.dto.HttpResponse;
+import ru.ilyshkafox.nifi.vk.client.controllers.redirectstrategy.DisableRedirectStrategy;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,7 +26,7 @@ public class Http5WebClient implements WebClient {
     public Http5WebClient(final CookieStore cookieStore) {
         httpclient = HttpClients.custom()
                 .setDefaultCookieStore(cookieStore)
-                .setRedirectStrategy(new DefaultRedirectStrategy())
+                .setRedirectStrategy(new DisableRedirectStrategy())
                 .build();
     }
 
@@ -71,6 +71,11 @@ public class Http5WebClient implements WebClient {
     @Override
     public HttpResponse send(String method, URI url, Map<String, String> headers) {
         return send(method, url, headers, null, null);
+    }
+
+    @Override
+    public HttpResponse get(URI url) {
+        return send("GET", url, Map.of(), null, null);
     }
 
     @Override

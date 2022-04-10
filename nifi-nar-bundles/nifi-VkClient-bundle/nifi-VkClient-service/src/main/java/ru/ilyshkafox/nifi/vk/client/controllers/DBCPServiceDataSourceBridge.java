@@ -13,10 +13,13 @@ import java.util.logging.Logger;
 @RequiredArgsConstructor
 public class DBCPServiceDataSourceBridge implements DataSource {
     private final DBCPService connectionPool;
+    private final String defaultSchemaName;
 
     @Override
     public Connection getConnection() throws SQLException {
-        return connectionPool.getConnection();
+        Connection connection = connectionPool.getConnection();
+        connection.setSchema(defaultSchemaName);
+        return connection;
     }
 
     @Override
