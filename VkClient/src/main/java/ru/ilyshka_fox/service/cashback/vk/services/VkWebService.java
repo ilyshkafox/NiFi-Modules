@@ -1,15 +1,10 @@
 package ru.ilyshka_fox.service.cashback.vk.services;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import reactor.core.publisher.Mono;
 
-import java.io.Closeable;
+import java.util.function.Function;
 
 
 public interface VkWebService {
-    boolean isLogin();
-
-    void open(String url);
-
-    WebElement findElement(By by);
+    <T> Mono<T> blockResource(Function<VkWebClient, T> result);
 }

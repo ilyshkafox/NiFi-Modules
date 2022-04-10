@@ -43,35 +43,35 @@ public class PostScanResponse {
     @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class User {
-        Integer id;
-        String ban_reason;
-        LocalDate birth_date;
-        Integer birth_day;
-        Integer birth_month;
-        String bl_customer_id;
-        String brandlink_user_id;
-        LocalDateTime category_new_visit_at;
-        Integer checkbits_count;
-        String city_id;
-        String city_title;
-        Boolean confirmed_18;
-        String country_id;
-        String country_title;
-        Boolean favorites_allowed;
-        String first_name;
-        String last_name;
-        String fraud_counter; // ??? Какйо тип данных
-        Boolean is_fraud;
-        Boolean metro_user;
-        String notifications_allowed; // ??? Какой тип данных
-        String notifications_permission_asked; // ??? Какой тип данных
-        String notify_coupon_toggle_status; // ??? Какой тип данных
-        String perek_created_at; // ??? Какой тип данных
-        String perek_user; // ??? Какой тип данных
-        Boolean pglead_registered;
-        String photo_url;
-        String ref_from;
-        String ref_link;
-        Integer sex;
+        private Integer id;
+        private String ban_reason;
+        private LocalDate birth_date;
+        private Integer birth_day;
+        private Integer birth_month;
+        private String bl_customer_id;
+        private String brandlink_user_id;
+        private LocalDateTime category_new_visit_at;
+        private Integer checkbits_count;
+        private String city_id;
+        private String city_title;
+        private Boolean confirmed_18;
+        private String country_id;
+        private String country_title;
+        private Boolean favorites_allowed;
+        private String first_name;
+        private String last_name;
+        private String fraud_counter; // ??? Какйо тип данных
+        private Boolean is_fraud;
+        private Boolean metro_user;
+        private String notifications_allowed; // ??? Какой тип данных
+        private String notifications_permission_asked; // ??? Какой тип данных
+        private String notify_coupon_toggle_status; // ??? Какой тип данных
+        private String perek_created_at; // ??? Какой тип данных
+        private String perek_user; // ??? Какой тип данных
+        private Boolean pglead_registered;
+        private String photo_url;
+        private String ref_from;
+        private String ref_link;
+        private Integer sex;
     }
 }
