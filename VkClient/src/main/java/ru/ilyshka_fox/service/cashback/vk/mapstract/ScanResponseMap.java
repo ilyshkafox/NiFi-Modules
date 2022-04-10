@@ -14,4 +14,6 @@ public interface ScanResponseMap {
     }
 
     List<ScanResponseItem> map(List<ScanResponse.DataItem> source);
+
+    ScanResponseItem map(ScanResponse.DataItem source);
 }

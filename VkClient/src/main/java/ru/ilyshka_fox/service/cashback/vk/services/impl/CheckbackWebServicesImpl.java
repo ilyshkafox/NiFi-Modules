@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import ru.ilyshka_fox.service.cashback.vk.dto.ScanOneResponse;
 import ru.ilyshka_fox.service.cashback.vk.dto.ScanResponse;
 import ru.ilyshka_fox.service.cashback.vk.services.CheckbackWebServices;
 import ru.ilyshka_fox.service.cashback.vk.services.VkWebService;
@@ -22,36 +23,53 @@ public class CheckbackWebServicesImpl implements CheckbackWebServices {
     private final VkWebService vkService;
     private final WebClient webClient;
 
-    public Mono<ScanResponse> getRecipes(int page, int limit) {
-        return vkService.blockResource(vk -> {
-            vk.open(VK_CHECKBACK_PAGE);
-            return "?" + vk.findElement(By.tagName("iframe")).getAttribute("src").split("\\?", 2)[1];
-        }).flatMap(XVkSign -> {
-            try {
-                URI postUrl = new URIBuilder(SCAN_PAGE)
-                        .addParameter("page", String.valueOf(page))
-                        .addParameter("limit", String.valueOf(limit))
-                        .build();
+    public Mono<ScanResponse> getReceipts(int page, int limit) {
+        return getXVkSign()
+                .flatMap(XVkSign -> {
+                    try {
+                        URI postUrl = new URIBuilder(SCAN_PAGE)
+                                .addParameter("page", String.valueOf(page))
+                                .addParameter("limit", String.valueOf(limit))
+                                .build();
 
-                return webClient.get()
-                        .uri(postUrl)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("X-vk-sign", XVkSign)
-                        .retrieve()
-                        .bodyToMono(ScanResponse.class);
-            } catch (Exception e) {
-                return Mono.error(e);
-            }
-        });
+                        return webClient.get()
+                                .uri(postUrl)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .header("X-vk-sign", XVkSign)
+                                .retrieve()
+                                .bodyToMono(ScanResponse.class);
+                    } catch (Exception e) {
+                        return Mono.error(e);
+                    }
+                });
 
 
     }
 
+    @Override
+    public Mono<ScanResponse.DataItem> getReceipt(long id) {
+        return getXVkSign()
+                .flatMap(XVkSign -> {
+                    try {
+                        URI postUrl = new URIBuilder(SCAN_PAGE + "/" + id).build();
+                        return webClient.get()
+                                .uri(postUrl)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .header("X-vk-sign", XVkSign)
+                                .retrieve()
+                                .bodyToMono(ScanOneResponse.class)
+                                .map(ScanOneResponse::getResponse);
+                    } catch (Exception e) {
+                        return Mono.error(e);
+                    }
+                });
+    }
 
-    private void sleep(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException ignore) {
-        }
+
+    private Mono<String> getXVkSign() {
+        return vkService.blockResource(vk -> {
+            vk.open(VK_CHECKBACK_PAGE);
+            return "?" + vk.findElement(By.tagName("iframe")).getAttribute("src").split("\\?", 2)[1];
+        });
     }
 }

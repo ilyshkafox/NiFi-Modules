@@ -5,6 +5,7 @@ import ru.ilyshka_fox.service.cashback.vk.dto.ScanResponse;
 
 public interface CheckbackWebServices {
 
-    Mono<ScanResponse> getRecipes(int page, int limit);
+    Mono<ScanResponse> getReceipts(int page, int limit);
 
+    Mono<ScanResponse.DataItem> getReceipt(long id);
 }

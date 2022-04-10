@@ -6,11 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
-import ru.ilyshka_fox.service.cashback.vk.ConfigurationBean;
 import ru.ilyshka_fox.service.cashback.vk.VkClientApplication;
-import ru.ilyshka_fox.service.cashback.vk.services.impl.CheckbackWebServicesImpl;
-import ru.ilyshka_fox.service.cashback.vk.dto.ScanResponse;
-import ru.ilyshka_fox.service.cashback.vk.services.impl.VkWebClientImpl;
 
 import java.io.IOException;
 

@@ -1,1 +1,4 @@
-GET http://localhost:8080/api?page=1&size=10&key=82b2989c-0cab-4c2e-aec6-d2443da4f5f7
+GET http://localhost:8080/api/scan?page=1&size=10&key=82b2989c-0cab-4c2e-aec6-d2443da4f5f7
+
+###
+GET http://localhost:8080/api/scan/68070845?key=82b2989c-0cab-4c2e-aec6-d2443da4f5f7
