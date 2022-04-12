@@ -7,8 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import ru.ilyshka_fox.service.cashback.vk.dto.ScanOneResponse;
-import ru.ilyshka_fox.service.cashback.vk.dto.ScanResponse;
 import ru.ilyshka_fox.service.cashback.vk.services.CheckbackWebServices;
 import ru.ilyshka_fox.service.cashback.vk.services.VkWebService;
 
@@ -23,7 +21,7 @@ public class CheckbackWebServicesImpl implements CheckbackWebServices {
     private final VkWebService vkService;
     private final WebClient webClient;
 
-    public Mono<ScanResponse> getReceipts(int page, int limit) {
+    public Mono<String> getScan(int page, int limit) {
         return getXVkSign()
                 .flatMap(XVkSign -> {
                     try {
@@ -37,7 +35,7 @@ public class CheckbackWebServicesImpl implements CheckbackWebServices {
                                 .accept(MediaType.APPLICATION_JSON)
                                 .header("X-vk-sign", XVkSign)
                                 .retrieve()
-                                .bodyToMono(ScanResponse.class);
+                                .bodyToMono(String.class);
                     } catch (Exception e) {
                         return Mono.error(e);
                     }
@@ -47,18 +45,36 @@ public class CheckbackWebServicesImpl implements CheckbackWebServices {
     }
 
     @Override
-    public Mono<ScanResponse.DataItem> getReceipt(long id) {
+    public Mono<String> getScan(long id) {
         return getXVkSign()
                 .flatMap(XVkSign -> {
                     try {
-                        URI postUrl = new URIBuilder(SCAN_PAGE + "/" + id).build();
                         return webClient.get()
-                                .uri(postUrl)
+                                .uri(SCAN_PAGE + "/{id}", id)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .header("X-vk-sign", XVkSign)
                                 .retrieve()
-                                .bodyToMono(ScanOneResponse.class)
-                                .map(ScanOneResponse::getResponse);
+                                .bodyToMono(String.class);
+                    } catch (Exception e) {
+                        return Mono.error(e);
+                    }
+                });
+    }
+
+//    {"response":{"validation":2}} - чек уже есть в системе.
+    @Override
+    public Mono<String> postScan(final String qrString) {
+
+        return getXVkSign()
+                .flatMap(XVkSign -> {
+                    try {
+                        return webClient.post()
+                                .uri(SCAN_PAGE)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("X-vk-sign", XVkSign)
+                                .bodyValue("{\"action_id\":-1,\"first_name\":null,\"qr_string\":\"" + qrString + "\",\"source\":\"handed\"}")
+                                .retrieve()
+                                .bodyToMono(String.class);
                     } catch (Exception e) {
                         return Mono.error(e);
                     }

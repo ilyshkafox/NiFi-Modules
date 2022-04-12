@@ -1,4 +1,13 @@
-GET http://localhost:8080/api/scan?page=1&size=10&key=82b2989c-0cab-4c2e-aec6-d2443da4f5f7
+GET http://localhost:8080/api/scan?key=82b2989c-0cab-4c2e-aec6-d2443da4f5f7&page=1&size=10
 
 ###
 GET http://localhost:8080/api/scan/68070845?key=82b2989c-0cab-4c2e-aec6-d2443da4f5f7
+
+
+
+###
+# t=20220306T1449&s=183.00&fn=9960440301011412&i=15489&fp=4257925032&n=1
+POST http://localhost:8080/api/scan?key=82b2989c-0cab-4c2e-aec6-d2443da4f5f7&qrString=t%3D20220306T1449%26s%3D183.00%26fn%3D9960440301011412%26i%3D15489%26fp%3D4257925032%26n%3D1&shopInn=5256060907
+
+
+###
