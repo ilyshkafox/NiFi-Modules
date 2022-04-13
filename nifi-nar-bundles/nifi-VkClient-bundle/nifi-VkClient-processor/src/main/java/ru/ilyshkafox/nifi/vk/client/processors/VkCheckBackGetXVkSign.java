@@ -10,18 +10,18 @@ import org.apache.nifi.flowfile.FlowFile;
 import org.apache.nifi.processor.AbstractProcessor;
 import org.apache.nifi.processor.ProcessContext;
 import org.apache.nifi.processor.ProcessSession;
+import org.apache.nifi.processor.Relationship;
 import org.apache.nifi.processor.exception.ProcessException;
-import ru.ilyshkafox.nifi.vk.client.controllers.CheckBackClient;
 import ru.ilyshkafox.nifi.vk.client.controllers.BaseVkClientService;
-import ru.ilyshkafox.nifi.vk.client.controllers.dto.ScanResponse;
 
 import java.util.List;
+import java.util.Set;
 
 @Tags({"ilyshka", "vk", "client", "checkback", "receipt", "custom"})
 @InputRequirement(InputRequirement.Requirement.INPUT_REQUIRED)
-@WritesAttribute(attribute = "", description = "")
-@CapabilityDescription("Поулчем первую страницу с чеками CheckBack сервиса от VK и выводит в логи))")
-public class VkCheckBackGetPageReceipt extends AbstractProcessor {
+@WritesAttribute(attribute = "X-vk-sign", description = "Токер авторизации в кешбек приложении")
+@CapabilityDescription("Получаем токен авторизации))")
+public class VkCheckBackGetXVkSign extends AbstractProcessor {
 
     static final PropertyDescriptor VK_CLIENT = new PropertyDescriptor.Builder()
             .name("client-vk")
@@ -31,8 +31,17 @@ public class VkCheckBackGetPageReceipt extends AbstractProcessor {
             .build();
 
 
+    static final Relationship REL_SUCCESS = new Relationship.Builder()
+            .name("success")
+            .description("FlowFiles that are successfully transformed will be routed to this relationship")
+            .build();
+
+
     @Getter
     private final List<PropertyDescriptor> supportedPropertyDescriptors = List.of(VK_CLIENT);
+
+    @Getter
+    public Set<Relationship> relationships = Set.of(REL_SUCCESS);
 
 
     @Override
@@ -41,11 +50,9 @@ public class VkCheckBackGetPageReceipt extends AbstractProcessor {
         if (flowFile == null) {
             return;
         }
-
-        BaseVkClientService vkClient = context.getProperty(VK_CLIENT).asControllerService(BaseVkClientService.class);
-        CheckBackClient checkBackClient = vkClient.getCheckBackClient();
-        ScanResponse scan = checkBackClient.getScan(1);
-        List<ScanResponse.DataItem> items = scan.getResponse().getItems().getData();
-        items.forEach(dataItem -> getLogger().info("Item: {}", dataItem));
+        var service = context.getProperty(VK_CLIENT).asControllerService(BaseVkClientService.class);
+        String xVkSign = service.getCheckbackXVkSign();
+        session.putAttribute(flowFile, "X-vk-sign", xVkSign);
+        session.transfer(flowFile, REL_SUCCESS);
     }
 }

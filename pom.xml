@@ -34,8 +34,6 @@
         <module>initializer-database</module>
         <module>nifi-nar-bundles</module>
         <module>nifi-build</module>
-        <module>VkClient</module>
-        <module>VkClientApi</module>
     </modules>
 
     <licenses>

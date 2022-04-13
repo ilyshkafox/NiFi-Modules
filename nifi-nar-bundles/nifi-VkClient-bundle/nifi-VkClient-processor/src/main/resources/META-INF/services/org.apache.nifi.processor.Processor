@@ -1,2 +1,1 @@
-ru.ilyshkafox.nifi.vk.client.processors.VkCheckBackGetPageReceipt
-ru.ilyshkafox.nifi.vk.client.processors.VkCheckBackRegisterReceipt
+ru.ilyshkafox.nifi.vk.client.processors.VkCheckBackGetXVkSign
