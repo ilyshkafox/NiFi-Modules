@@ -24,7 +24,55 @@ ENV NIFI_LOG_DIR=${NIFI_HOME}/logs
 RUN groupadd -g ${GID} nifi || groupmod -n nifi `getent group ${GID} | cut -d: -f1` \
     && useradd --shell /bin/bash -u ${UID} -g ${GID} -m nifi \
     && apt-get update \
-    && apt-get install -y jq xmlstarlet procps
+    && apt-get install -y jq xmlstarlet procps libglib2.0-0 libnss3 libx11-6
+
+#========================
+# Miscellaneous packages
+# Includes minimal runtime used for executing non GUI Java programs
+#========================
+RUN apt-get -qqy update \
+  && apt-get -qqy --no-install-recommends install \
+    bzip2 \
+    ca-certificates \
+    openjdk-11-jre-headless \
+    tzdata \
+    sudo \
+    unzip \
+    wget \
+    jq \
+    curl \
+    supervisor \
+    gnupg2 \
+  && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
+  && sed -i 's/securerandom\.source=file:\/dev\/random/securerandom\.source=file:\/dev\/urandom/' ./usr/lib/jvm/java-11-openjdk-amd64/conf/security/java.security
+
+
+#============================================
+# Google Chrome
+#============================================
+# can specify versions by CHROME_VERSION;
+#  e.g. google-chrome-stable=53.0.2785.101-1
+#       google-chrome-beta=53.0.2785.92-1
+#       google-chrome-unstable=54.0.2840.14-1
+#       latest (equivalent to google-chrome-stable)
+#       google-chrome-beta  (pull latest beta)
+#============================================
+ARG CHROME_VERSION="google-chrome-stable"
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+  && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
+  && apt-get update -qqy \
+  && apt-get -qqy install \
+    ${CHROME_VERSION:-google-chrome-stable} \
+  && rm /etc/apt/sources.list.d/google-chrome.list \
+  && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+
+#=================================
+# Chrome Launch Script Wrapper
+#=================================
+COPY wrap_chrome_binary /opt/bin/wrap_chrome_binary
+RUN chmod ugo+x /opt/bin/wrap_chrome_binary
+RUN /opt/bin/wrap_chrome_binary
 
 COPY --chown=nifi:nifi --from=original $NIFI_BASE_DIR $NIFI_BASE_DIR
 COPY --chown=nifi:nifi  drivers $NIFI_HOME/drivers

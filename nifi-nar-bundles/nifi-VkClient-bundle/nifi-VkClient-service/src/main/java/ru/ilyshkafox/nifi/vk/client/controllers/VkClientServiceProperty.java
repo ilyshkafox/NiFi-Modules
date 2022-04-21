@@ -36,23 +36,6 @@ public class VkClientServiceProperty {
             .addValidator(StandardValidators.NON_BLANK_VALIDATOR)
             .build();
 
-    public static final PropertyDescriptor BROWSER_TYPE = new PropertyDescriptor.Builder()
-            .name("browser-driver")
-            .displayName("Тип браузера")
-            .required(true)
-            .expressionLanguageSupported(ExpressionLanguageScope.NONE)
-            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
-            .allowableValues(DriveType.values())
-            .build();
-
-
-    public static final PropertyDescriptor BROWSER_URL = new PropertyDescriptor.Builder()
-            .name("browser-url")
-            .displayName("Ссылка на контейнер с браузером")
-            .required(true)
-            .expressionLanguageSupported(ExpressionLanguageScope.VARIABLE_REGISTRY)
-            .addValidator(StandardValidators.NON_BLANK_VALIDATOR)
-            .build();
     //==============================================================================================
 
     private final ConfigurationContext context;
@@ -69,14 +52,4 @@ public class VkClientServiceProperty {
     public String getRucaptchaToken() {
         return context.getProperty(RUCAPTCHA_TOKEN).getValue();
     }
-
-
-    public DriveType getDriverType() {
-        return DriveType.valueOf(context.getProperty(BROWSER_TYPE).getValue());
     }
-
-    public String getBrowserUrl() {
-        return context.getProperty(BROWSER_URL).getValue();
-    }
-
-}

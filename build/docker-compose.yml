@@ -15,7 +15,14 @@ services:
       - "8085:8085"
     volumes:
       - ./conf:/opt/nifi/nifi-current/conf
+      - ./screenshots:/screenshots
     environment:
       NIFI_WEB_HTTP_PORT: 8080
       NIFI_SENSITIVE_PROPS_KEY: ${SECRET_KEY}
       PROVERKACHEKA_TOKEN: ${PROVERKACHEKA_TOKEN}
+  selenium:
+    image: selenium/standalone-chrome:100.0
+    shm_size: 2gb
+    ports:
+      - "4444:4444"
+      - "7900:7900"
